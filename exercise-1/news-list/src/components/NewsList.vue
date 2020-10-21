@@ -9,7 +9,7 @@
             v-on:removeitem="removeitem($event)"
         ></NewsItem>
         </div>
-        <NewsForm></NewsForm>
+        <NewsForm v-on:additemandpreventdefaultevent="additem($event)"></NewsForm>
     </div>
 </template>
 
@@ -59,7 +59,7 @@ export default {
       });
     },
     additem(title) {
-      this.items.add({'id': createListItemId(), 'title': title, 'votes': 0});
+      this.items.push({'id': createListItemId(), 'title': title, 'votes': 0});
     },
   },
 };
