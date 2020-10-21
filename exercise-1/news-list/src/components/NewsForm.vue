@@ -1,8 +1,8 @@
 <template>
-  <div class="input-group mb-3">
+  <div class="input-group mb-3 justify-content-center">
       <form @submit="additemandpreventdefault($event)">
         <input type="text" v-model="newsTitle" placeholder="add news title here" class="form-control">
-        <div class="input-group-append">
+        <div class="input-group-append justify-content-center mt-2">
             <button class="btn btn-outline-secondary" type="submit">Create</button>
         </div>
       </form>
