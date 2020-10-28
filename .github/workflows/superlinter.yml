@@ -11,15 +11,12 @@ jobs:
         node-version: [12.x]
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Installing
-      working-directory: ./news-list
-      run: npm install
-    - name: Testing
-      working-directory: ./news-list
-      run: npm run test:unit
-    - name: Linting
-      working-directory: ./news-list
-      run: npm run lint
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: ./
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: npm install
+    - run: npm run test:unit
+    - run: npm run lint
       env:
         CI: true
