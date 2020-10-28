@@ -1,7 +1,7 @@
 <template>
   <div class="mb-4 mt-4">
-    <h2>{{ item.title }} ({{ item.votes }})</h2>
-    <button type="button" class="btn btn-primary mr-2" v-on:click="addcounter">
+    <h2><span class="news-title">{{ item.title }}</span>&nbsp;<span class="news-votes">({{ item.votes }})</span></h2>
+    <button type="button" class="btn btn-primary mr-2 upvote-button" v-on:click="addcounter">
       Upvote
     </button>
     <button
@@ -13,7 +13,7 @@
     </button>
     <button
       type="button"
-      class="btn btn-primary mr-2"
+      class="btn btn-primary mr-2 remove-button"
       v-on:click="$emit('removeitem', item.id)"
     >
       Remove

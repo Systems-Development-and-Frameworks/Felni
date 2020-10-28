@@ -8,19 +8,24 @@
         v-on:removeitem="removeitem($event)"
       ></NewsItem>
     </div>
-    <NewsForm v-on:additemandpreventdefaultevent="additem($event)"></NewsForm>
+    <div v-if="!sortItems.length" class="mb-4 mt-4">
+      The list is empty &#128546;
+    </div>
+    <NewsForm v-on:additemandpreventdefaultevent="additem($event)" v-on:reverseordering="reverseordering($event)"></NewsForm>
   </div>
 </template>
 
 <script>
-import NewsItem from './NewsItem'
-import NewsForm from './NewsForm'
+import NewsItem from '../NewsItem/NewsItem'
+import NewsForm from '../NewsForm/NewsForm'
 
 var idCounter = 0
 function createListItemId () {
   idCounter = idCounter + 1
   return idCounter
 }
+
+var orderAscending = false
 
 export default {
   name: 'NewsList',
@@ -39,7 +44,7 @@ export default {
   computed: {
     sortItems: function () {
       return [...this.items].sort((item1, item2) => {
-        return item1.votes > item2.votes ? -1 : 1
+        return (item1.votes > item2.votes ? -1 : 1) * (orderAscending ? -1 : 1)
       })
     }
   },
@@ -55,6 +60,10 @@ export default {
     },
     additem (title) {
       this.items.push({ id: createListItemId(), title: title, votes: 0 })
+    },
+    reverseordering () {
+      orderAscending = !orderAscending
+      this.items = [...this.items]
     }
   }
 }

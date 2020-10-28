@@ -5,16 +5,17 @@
         type="text"
         v-model="newsTitle"
         placeholder="add news title here"
-        class="form-control"
+        class="form-control title-input"
       />
       <div class="input-group-append justify-content-center mt-2">
         <button
-          class="btn btn-primary"
+          class="btn btn-primary create-item-button"
           type="submit"
           :disabled="newsTitle == ''"
         >
           Create
         </button>
+        <button type="button" class="btn btn-outline-secondary ml-2 reverse-order-button" v-on:click="$emit('reverseordering')">Reverse order</button>
       </div>
     </form>
   </div>

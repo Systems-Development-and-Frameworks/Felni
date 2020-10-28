@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import NewsList from './components/NewsList'
+import NewsList from './components/NewsList/NewsList'
 
 export default {
   name: 'App',
