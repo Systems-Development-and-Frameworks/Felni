@@ -13,4 +13,4 @@ This is the homework repository for the group Felni from Felix and Nicolas.
 
 ### Exercise 1:
 
-- Link to folder: [a relative link](./exercise-1/news-list)
+- Link to folder: [a relative link](./news-list)
