@@ -22,18 +22,18 @@
 
 <script>
 export default {
-  name: "NewsForm",
+  name: 'NewsForm',
   data: () => {
     return {
-      newsTitle: "",
-    };
+      newsTitle: ''
+    }
   },
   methods: {
     additemandpreventdefault: function (e) {
-      this.$emit("additemandpreventdefaultevent", this.newsTitle);
-      this.newsTitle = "";
-      e.preventDefault(); //Prevents the default behaviour of a <form> html element which would execute a HTTP request on submit.
-    },
-  },
-};
+      this.$emit('additemandpreventdefaultevent', this.newsTitle)
+      this.newsTitle = ''
+      e.preventDefault() // Prevents the default behaviour of a <form> html element which would execute a HTTP request on submit.
+    }
+  }
+}
 </script>

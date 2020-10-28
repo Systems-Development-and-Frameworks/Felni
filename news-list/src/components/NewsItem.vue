@@ -23,18 +23,17 @@
 
 <script>
 export default {
-  props: ["item"],
-  name: "NewsItem",
+  props: ['item'],
+  name: 'NewsItem',
   methods: {
-    addcounter() {
-      this.item.votes += 1;
-      this.$emit("updateitem", this.item);
+    addcounter () {
+      this.item.votes += 1
+      this.$emit('updateitem', this.item)
     },
-    reducecounter() {
-      this.item.votes -= 1;
-      this.$emit("updateitem", this.item);
-    },
-  },
-};
+    reducecounter () {
+      this.item.votes -= 1
+      this.$emit('updateitem', this.item)
+    }
+  }
+}
 </script>
-
