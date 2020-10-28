@@ -6,19 +6,20 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
-        node-version: [8.x, 10.x, 12.x]
+        node-version: [12.x]
 
     steps:
     - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
-    - run: npm install
-    - run: npm run test:unit
-    - run: npm run lint
+    - name: Installing
+      working-directory: ./news-list
+      run: npm install
+    - name: Testing
+      working-directory: ./news-list
+      run: npm run test:unit
+    - name: Linting
+      working-directory: ./news-list
+      run: npm run lint
       env:
         CI: true
