@@ -11,12 +11,9 @@ jobs:
         node-version: [12.x]
 
     steps:
+    - uses: actions/checkout@v2
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: ./
-      with:
-        node-version: ${{ matrix.node-version }}
-    - run: npm install
-    - run: npm run test:unit
-    - run: npm run lint
+      working-directory: ./news-list
+      run: npm install
       env:
         CI: true
