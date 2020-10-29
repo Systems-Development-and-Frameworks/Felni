@@ -10,7 +10,6 @@
 
 <script>
 import NewsList from './components/NewsList/NewsList'
-
 export default {
   name: 'App',
   components: {
@@ -18,3 +17,6 @@ export default {
   }
 }
 </script>
+<style src="bootstrap/dist/css/bootstrap.css">
+</style>
+

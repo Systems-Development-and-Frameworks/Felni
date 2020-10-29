@@ -12,9 +12,11 @@
   },
   "dependencies": {
     "@storybook/addon-a11y": "^6.0.27",
+    "bootstrap": "^4.5.3",
+    "bootstrap-vue": "^2.18.1",
     "core-js": "^3.6.5",
     "eslint-plugin-jest": "^24.1.0",
-    "vue": "^2.6.11"
+    "vue": "^2.6.12"
   },
   "devDependencies": {
     "@babel/core": "^7.12.3",
