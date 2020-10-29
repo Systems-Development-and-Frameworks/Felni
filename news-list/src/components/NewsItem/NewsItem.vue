@@ -37,3 +37,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.btn {
+  background-color: #007BAA;
+}
+</style>
