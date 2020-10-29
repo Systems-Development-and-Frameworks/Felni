@@ -3,16 +3,14 @@ import NewsList from '@/components/NewsList/NewsList.vue'
 import NewsItem from '@/components/NewsItem/NewsItem.vue'
 
 describe('Newslist.vue', () => {
-  
   describe(':initialItems', () => {
-
     describe('empty', () => {
       const newsList = mount(NewsList, {
-        data() {
+        data () {
           return {
             items: []
           }
-        }  
+        }
       })
 
       it('renders empty state', () => {
@@ -23,16 +21,16 @@ describe('Newslist.vue', () => {
 
     describe('not empty', () => {
       const newsList = mount(NewsList, {
-        data() {
+        data () {
           return {
             items: [
               { id: 0, title: 'Item 1', votes: 1 },
               { id: 1, title: 'Item 2', votes: 0 }
             ]
           }
-        }  
+        }
       })
-      
+
       it('renders <NewsItem> for each item', () => {
         const newsItems = newsList.findAllComponents(NewsItem)
         expect(newsItems).toHaveLength(2)
@@ -46,33 +44,38 @@ describe('Newslist.vue', () => {
           const lastNewsItemAfterReversOrder = newsList.findAllComponents(NewsItem).at(1)
 
           expect(lastNewsItemAfterReversOrder.find('span.news-title').text())
-          .toEqual(firstItemBeforeReversOrder.find('span.news-title').text())
+            .toEqual(firstItemBeforeReversOrder.find('span.news-title').text())
           expect(lastNewsItemAfterReversOrder.find('span.news-votes').text())
-          .toEqual(firstItemBeforeReversOrder.find('span.news-votes').text())
+            .toEqual(firstItemBeforeReversOrder.find('span.news-votes').text())
         })
       })
     })
   })
 
   describe(':editItemList', () => {
-    
     describe('add two items to a empty list', () => {
+      const elem = document.createElement('div')
+      if (document.body) {
+        document.body.appendChild(elem)
+      }
+
       const newsList = mount(NewsList, {
-        data() {
+        data () {
           return {
             items: []
           }
-        }  
+        },
+        attachTo: elem
       })
 
       it('has two new items', async () => {
         const titleInput = newsList.find('input.title-input')
         await titleInput.setValue('Jest Item 1')
-        //await newsList.vm.$nextTick()
         await newsList.find('button.create-item-button').trigger('click')
         await titleInput.setValue('Jest Item 2')
         await newsList.find('button.create-item-button').trigger('click')
-  
+        await newsList.vm.$nextTick()
+
         const newsItems = newsList.findAllComponents(NewsItem)
         expect(newsItems).toHaveLength(2)
       })
@@ -80,14 +83,21 @@ describe('Newslist.vue', () => {
 
     describe('upvote last item', () => {
       const newsList = mount(NewsList, {
-        data() {
+        data () {
           return {
             items: [
               { id: 0, title: 'Item 1', votes: 0 },
               { id: 1, title: 'Item 2', votes: 0 }
             ]
           }
-        }  
+        },
+        computed: {
+          sortItems: function () {
+            return [...this.items].sort((item1, item2) => {
+              return (item1.votes > item2.votes ? -1 : 1)
+            })
+          }
+        }
       })
 
       it('moves last item to top', async () => {
@@ -95,24 +105,22 @@ describe('Newslist.vue', () => {
         await lastNewsItemBeforeUpvote.find('button.upvote-button').trigger('click')
         const firstNewsItemAfterUpvote = newsList.findComponent(NewsItem)
         expect(firstNewsItemAfterUpvote.find('span.news-title').text())
-        .toEqual(lastNewsItemBeforeUpvote.find('span.news-title').text())
+          .toEqual(lastNewsItemBeforeUpvote.find('span.news-title').text())
         expect(firstNewsItemAfterUpvote.find('span.news-votes').text())
-        .toEqual('1')
+          .toEqual('(1)')
       })
-
     })
 
     describe('remove first item', () => {
-
       const newsList = mount(NewsList, {
-        data() {
+        data () {
           return {
             items: [
               { id: 0, title: 'Item 1', votes: 0 },
               { id: 1, title: 'Item 2', votes: 0 }
             ]
           }
-        }  
+        }
       })
 
       it('second item moves to top', async () => {
@@ -123,11 +131,8 @@ describe('Newslist.vue', () => {
 
         const firstNewsItemAfterRemoval = newsList.findComponent(NewsItem)
         expect(firstNewsItemAfterRemoval.find('span.news-title').text())
-        .toEqual(secondNewsItemBeforeRemoval.find('span.news-title').text())
+          .toEqual(secondNewsItemBeforeRemoval.find('span.news-title').text())
       })
-
     })
-    
-    
   })
 })
