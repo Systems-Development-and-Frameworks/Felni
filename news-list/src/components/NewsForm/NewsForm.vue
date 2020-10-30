@@ -6,6 +6,7 @@
         v-model="newsTitle"
         placeholder="add news title here"
         class="form-control title-input"
+        aria-label="Newstitleinput"
       />
       <div class="input-group-append justify-content-center mt-2">
         <button
