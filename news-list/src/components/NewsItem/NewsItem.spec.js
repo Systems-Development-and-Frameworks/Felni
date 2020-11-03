@@ -36,5 +36,21 @@ describe('NewsItem.vue', () => {
         expect(newsItem.props().item.votes).toBe(1)
       })
     })
+
+    describe('click downvote', () => {
+        const newsItem = mount(NewsItem, {
+          propsData: {
+            item: { id: 20, title: 'Item 1', votes: 0 }
+          }
+        })
+  
+        it('decreases votes by one', async () => {
+          const upvoteButton = newsItem.find('button.downvote-button')
+          upvoteButton.trigger('click')
+          await newsItem.vm.$nextTick()
+  
+          expect(newsItem.props().item.votes).toBe(-1)
+        })
+      })
   })
 })

@@ -6,7 +6,7 @@
     </button>
     <button
       type="button"
-      class="btn btn-primary mr-2"
+      class="btn btn-primary mr-2 downvote-button"
       v-on:click="reducecounter"
     >
       Downvote
