@@ -5,7 +5,9 @@ export default {
   component: NewsList
 }
 
-export const Story = () => ({
+const Template = (args, { argTypes }) => ({
   components: { NewsList },
   template: '<NewsList/>'
 })
+
+export const Default = Template.bind({});
