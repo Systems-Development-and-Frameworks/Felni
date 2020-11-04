@@ -4,10 +4,7 @@ import { action } from '@storybook/addon-actions'
 export default {
   title: 'NewsForm',
   component: NewsForm,
-  excludeStories: /.*Data$/,
-  argTypes: {
-    newsTitle: { control: 'text' }
-  }
+  excludeStories: /.*Data$/
 }
 
 export const actionsData = {
@@ -20,19 +17,3 @@ export const Default = (args, { argTypes }) => ({
   template: '<NewsForm @reverseordering="onReverseOrdering" @additemandpreventdefaultevent="onAdditemandpreventdefaultevent"/>',
   methods: actionsData
 })
-
-const Template = (args, { argTypes }) => ({
-  components: { NewsForm },
-  template: '<NewsForm @reverseordering="onReverseOrdering" @additemandpreventdefaultevent="onAdditemandpreventdefaultevent"/>',
-  data () {
-    return {
-      newsTitle: args.newsTitle
-    }
-  },
-  methods: actionsData
-})
-
-export const Activated = Template.bind({})
-Activated.args = {
-  newsTitle: 'A different text'
-}
