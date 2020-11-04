@@ -10,4 +10,4 @@ const Template = (args, { argTypes }) => ({
   template: '<NewsList/>'
 })
 
-export const Default = Template.bind({});
+export const Default = Template.bind({})

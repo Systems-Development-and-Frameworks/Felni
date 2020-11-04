@@ -6,10 +6,10 @@ describe('NewsForm.vue', () => {
     describe('click create', () => {
       const newsForm = mount(NewsForm, {
         data () {
-            return {
-              newsTitle: ''
-            }
+          return {
+            newsTitle: ''
           }
+        }
       })
 
       it('is disabled when input is empty', async () => {
@@ -30,22 +30,22 @@ describe('NewsForm.vue', () => {
     })
 
     describe('click reverse order', () => {
-        const newsForm = mount(NewsForm, {
-            data () {
-                return {
-                    newsTitle: ''
-                }
-            }
-        })
-  
-        it('emits reverseordering event', async () => {
-          const reverseOrderButton = newsForm.find('button.reverse-order-button')
-          reverseOrderButton.trigger('click')
-          await newsForm.vm.$nextTick()
-  
-          expect(newsForm.emitted().reverseordering).toBeTruthy()
-          expect(newsForm.emitted().reverseordering.length).toBe(1)
-        })
+      const newsForm = mount(NewsForm, {
+        data () {
+          return {
+            newsTitle: ''
+          }
+        }
       })
+
+      it('emits reverseordering event', async () => {
+        const reverseOrderButton = newsForm.find('button.reverse-order-button')
+        reverseOrderButton.trigger('click')
+        await newsForm.vm.$nextTick()
+
+        expect(newsForm.emitted().reverseordering).toBeTruthy()
+        expect(newsForm.emitted().reverseordering.length).toBe(1)
+      })
+    })
   })
 })
