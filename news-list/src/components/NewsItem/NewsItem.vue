@@ -7,14 +7,14 @@
     <button
       type="button"
       class="btn btn-primary mr-2 downvote-button"
-      v-on:click="reducecounter"
+      @click="reducecounter"
     >
       Downvote
     </button>
     <button
       type="button"
       class="btn btn-primary mr-2 remove-button"
-      v-on:click="$emit('removeitem', item.id)"
+      @click="$emit('removeitem', item.id)"
     >
       Remove
     </button>
