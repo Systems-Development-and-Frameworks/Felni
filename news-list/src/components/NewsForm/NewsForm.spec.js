@@ -4,12 +4,15 @@ import NewsForm from '@/components/NewsForm/NewsForm.vue'
 describe('Tests for NewsForm.vue', () => {
   describe(':buttons', () => {
     describe('click create', () => {
-      const newsForm = mount(NewsForm, {
-        data () {
-          return {
-            newsTitle: ''
+      let newsForm
+      beforeEach(() => {
+        newsForm = mount(NewsForm, {
+          data () {
+            return {
+              newsTitle: ''
+            }
           }
-        }
+        })
       })
 
       it('is disabled when input is empty', async () => {
@@ -30,12 +33,15 @@ describe('Tests for NewsForm.vue', () => {
     })
 
     describe('click reverse order', () => {
-      const newsForm = mount(NewsForm, {
-        data () {
-          return {
-            newsTitle: ''
+      let newsForm
+      beforeEach(() => {
+        newsForm = mount(NewsForm, {
+          data () {
+            return {
+              newsTitle: ''
+            }
           }
-        }
+        })
       })
 
       it('emits reverseordering event', async () => {
