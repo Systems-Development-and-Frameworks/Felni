@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils'
 import NewsForm from '@/components/NewsForm/NewsForm.vue'
 
-describe('NewsForm.vue', () => {
+describe('Tests for NewsForm.vue', () => {
   describe(':buttons', () => {
     describe('click create', () => {
       const newsForm = mount(NewsForm, {

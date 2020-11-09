@@ -1,17 +1,26 @@
 <template>
-  <div class="mt-4">
-    <h1>News List</h1>
-    <div v-for="item in sortItems" :key="item.id">
-      <NewsItem
-        :item="item"
-        v-on:updateitem="updateitem($event)"
-        v-on:removeitem="removeitem($event)"
-      ></NewsItem>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col text-center">
+        <div class="mt-4">
+          <h1>News List</h1>
+          <div v-for="item in sortItems" :key="item.id">
+            <NewsItem
+              :item="item"
+              v-on:updateitem="updateitem($event)"
+              v-on:removeitem="removeitem($event)"
+            ></NewsItem>
+          </div>
+          <div v-if="!sortItems.length" class="mb-4 mt-4 empty-list">
+            The list is empty &#128546;
+          </div>
+          <NewsForm
+            v-on:additemandpreventdefaultevent="additem($event)"
+            v-on:reverseordering="reverseordering($event)"
+          ></NewsForm>
+        </div>
+      </div>
     </div>
-    <div v-if="!sortItems.length" class="mb-4 mt-4">
-      The list is empty &#128546;
-    </div>
-    <NewsForm v-on:additemandpreventdefaultevent="additem($event)" v-on:reverseordering="reverseordering($event)"></NewsForm>
   </div>
 </template>
 
