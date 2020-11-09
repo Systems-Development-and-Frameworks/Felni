@@ -16,6 +16,7 @@ describe('Newslist.vue', () => {
       it('renders empty state', () => {
         const newsItems = newsList.findAllComponents(NewsItem)
         expect(newsItems).toHaveLength(0)
+        expect(newsList.find('div.empty-list').text()).toEqual('The list is empty 😢')
       })
     })
 
