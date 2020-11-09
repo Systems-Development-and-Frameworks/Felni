@@ -4,10 +4,8 @@ module.exports = {
     "../src/**/*.stories.@(js|jsx|ts|tsx)"
   ],
   "addons": [
-    '@storybook/addon-actions',
     "@storybook/addon-links",
     "@storybook/addon-essentials",
-    "@storybook/addon-controls",
     "@storybook/addon-a11y"
   ]
 }
