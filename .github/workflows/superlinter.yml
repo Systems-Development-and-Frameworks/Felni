@@ -12,14 +12,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Installing
+    - name: Install, test and lint webapp
       working-directory: ./news-list
-      run: npm install
-    - name: Testing
-      working-directory: ./news-list
-      run: npm run test:unit
-    - name: Linting
-      working-directory: ./news-list
-      run: npm run lint
+      run: |
+        npm install
+        npm run test:unit
+        npm run lint
       env:
         CI: true
