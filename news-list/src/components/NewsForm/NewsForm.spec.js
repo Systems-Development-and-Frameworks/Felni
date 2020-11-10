@@ -14,21 +14,21 @@ describe('Tests for NewsForm.vue', () => {
           }
         })
       })
-
-      it('is disabled when input is empty', async () => {
-        const createButton = newsForm.find('button.create-item-button')
-
-        expect(createButton.attributes('disabled')).toBe('disabled')
+      describe('when input is empty', () => {
+        it('is is disabled', () => {
+          const createButton = newsForm.find('button.create-item-button')
+          expect(createButton.attributes('disabled')).toBe('disabled')
+        })
       })
 
-      it('is not disabled when input is not empty', async () => {
-        const titleInput = newsForm.find('input.title-input')
-        await titleInput.setValue('Title example')
-        await newsForm.vm.$nextTick()
-
-        const createButton = newsForm.find('button.create-item-button')
-
-        expect(createButton.attributes('disabled')).toBe(undefined)
+      describe('when input is not empty', () => {
+        beforeEach(async () => {
+          await newsForm.find('input').setValue('Title example')
+        })
+        it('is not disabled', async () => {
+          const createButton = newsForm.find('button.create-item-button')
+          expect(createButton.attributes('disabled')).toBe(undefined)
+        })
       })
     })
 
@@ -49,8 +49,7 @@ describe('Tests for NewsForm.vue', () => {
         reverseOrderButton.trigger('click')
         await newsForm.vm.$nextTick()
 
-        expect(newsForm.emitted().reverseordering).toBeTruthy()
-        expect(newsForm.emitted().reverseordering.length).toBe(1)
+        expect(newsForm.emitted()).toEqual({ reverseordering: [[]] })
       })
     })
   })
