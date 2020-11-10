@@ -29,12 +29,11 @@ import NewsItem from '../NewsItem/NewsItem'
 import NewsForm from '../NewsForm/NewsForm'
 
 var idCounter = 0
+
 function createListItemId () {
   idCounter = idCounter + 1
   return idCounter
 }
-
-var orderAscending = false
 
 export default {
   name: 'NewsList',
@@ -47,20 +46,22 @@ export default {
       items: [
         { id: createListItemId(), title: 'Item 1', votes: 0 },
         { id: createListItemId(), title: 'Item 2', votes: 0 }
-      ]
+      ],
+      orderAscending: false
     }
   },
   computed: {
     sortItems: function () {
-      return [...this.items].sort((item1, item2) => {
-        return (item1.votes > item2.votes ? -1 : 1) * (orderAscending ? -1 : 1)
-      })
+      if (this.orderAscending) {
+        return [...this.items].sort((item1, item2) => item1.votes - item2.votes)
+      } else {
+        return [...this.items].sort((item1, item2) => item2.votes - item1.votes)
+      }
     }
   },
   methods: {
     updateitem (eventitem) {
-      const item = this.items.find((item) => eventitem.id === item.id)
-      item.votes = eventitem.votes
+      this.items = this.items.map((item) => eventitem.id === item.id ? eventitem : item)
     },
     removeitem (id) {
       this.items = this.items.filter((item) => {
@@ -71,7 +72,7 @@ export default {
       this.items.push({ id: createListItemId(), title: title, votes: 0 })
     },
     reverseordering () {
-      orderAscending = !orderAscending
+      this.orderAscending = !this.orderAscending
       this.items = [...this.items]
     }
   }
