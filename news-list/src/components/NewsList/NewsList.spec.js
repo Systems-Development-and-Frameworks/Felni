@@ -39,15 +39,11 @@ describe('Newslist.vue', () => {
 
       describe('click "Reverse order"', () => {
         it('toggles between ascending and descending order', async () => {
-          const firstItemBeforeReversOrder = newsList.findComponent(NewsItem)
           const reverseOrderButton = newsList.find('button.reverse-order-button')
-          await reverseOrderButton.trigger('click')
-          const lastNewsItemAfterReversOrder = newsList.findAllComponents(NewsItem).at(1)
 
-          expect(lastNewsItemAfterReversOrder.find('span.news-title').text())
-            .toEqual(firstItemBeforeReversOrder.find('span.news-title').text())
-          expect(lastNewsItemAfterReversOrder.find('span.news-votes').text())
-            .toEqual(firstItemBeforeReversOrder.find('span.news-votes').text())
+          expect(newsList.findAll('span.news-votes').wrappers.map(w => w.text())).toEqual(['(1)', '(0)'])
+          await reverseOrderButton.trigger('click')
+          expect(newsList.findAll('span.news-votes').wrappers.map(w => w.text())).toEqual(['(0)', '(1)'])
         })
       })
     })
