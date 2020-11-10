@@ -28,3 +28,7 @@ export const Default = (args, { argTypes }) => ({
   },
   methods: actionsData
 })
+
+Default.args = {
+  item: { id: 1, title: 'Storyitem 1', votes: 0 }
+}
