@@ -73,7 +73,6 @@ export default {
     },
     reverseordering () {
       this.orderAscending = !this.orderAscending
-      this.items = [...this.items]
     }
   }
 }
