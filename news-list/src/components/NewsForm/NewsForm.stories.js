@@ -8,12 +8,11 @@ export default {
 }
 
 export const actionsData = {
-  onReverseOrdering: action('onReverseOrdering'),
   onAdditemandpreventdefaultevent: action('onAdditemandpreventdefaultevent')
 }
 
 export const Default = (args, { argTypes }) => ({
   components: { NewsForm },
-  template: '<NewsForm @reverseordering="onReverseOrdering" @additemandpreventdefaultevent="onAdditemandpreventdefaultevent"/>',
+  template: '<NewsForm @additemandpreventdefaultevent="onAdditemandpreventdefaultevent"/>',
   methods: actionsData
 })

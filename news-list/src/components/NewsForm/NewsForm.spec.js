@@ -31,26 +31,5 @@ describe('Tests for NewsForm.vue', () => {
         })
       })
     })
-
-    describe('click reverse order', () => {
-      let newsForm
-      beforeEach(() => {
-        newsForm = mount(NewsForm, {
-          data () {
-            return {
-              newsTitle: ''
-            }
-          }
-        })
-      })
-
-      it('emits reverseordering event', async () => {
-        const reverseOrderButton = newsForm.find('button.reverse-order-button')
-        reverseOrderButton.trigger('click')
-        await newsForm.vm.$nextTick()
-
-        expect(newsForm.emitted()).toEqual({ reverseordering: [[]] })
-      })
-    })
   })
 })

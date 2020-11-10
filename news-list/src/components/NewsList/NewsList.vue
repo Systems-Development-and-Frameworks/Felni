@@ -4,6 +4,7 @@
       <div class="col text-center">
         <div class="mt-4">
           <h1>News List</h1>
+            <button type="button" class="btn btn-outline-secondary ml-2 reverse-order-button" @click="reverseordering()">Reverse order</button>
           <div v-for="item in sortItems" :key="item.id">
             <NewsItem
               :item="item"
@@ -16,7 +17,6 @@
           </div>
           <NewsForm
             v-on:additemandpreventdefaultevent="additem($event)"
-            v-on:reverseordering="reverseordering($event)"
           ></NewsForm>
         </div>
       </div>

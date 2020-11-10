@@ -16,7 +16,6 @@
         >
           Create
         </button>
-        <button type="button" class="btn btn-outline-secondary ml-2 reverse-order-button" @click="$emit('reverseordering')">Reverse order</button>
       </div>
     </form>
   </div>
