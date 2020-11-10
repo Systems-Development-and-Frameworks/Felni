@@ -1,7 +1,14 @@
 <template>
   <div class="mb-4 mt-4">
-    <h2><span class="news-title">{{ item.title }}</span>&nbsp;<span class="news-votes">({{ item.votes }})</span></h2>
-    <button type="button" class="btn btn-primary mr-2 upvote-button" v-on:click="addcounter">
+    <h2>
+      <span class="news-title">{{ item.title }}</span
+      >&nbsp;<span class="news-votes">({{ item.votes }})</span>
+    </h2>
+    <button
+      type="button"
+      class="btn btn-primary mr-2 upvote-button"
+      v-on:click="addcounter"
+    >
       Upvote
     </button>
     <button
@@ -23,16 +30,23 @@
 
 <script>
 export default {
-  props: ['item'],
+  props: {
+    item: { type: Object, required: true }
+  },
+  data: function () {
+    return {
+      mutableItem: this.item
+    }
+  },
   name: 'NewsItem',
   methods: {
     addcounter () {
-      this.item.votes += 1
-      this.$emit('updateitem', this.item)
+      this.mutableItem.votes += 1
+      this.$emit('updateitem', this.mutableItem)
     },
     reducecounter () {
-      this.item.votes -= 1
-      this.$emit('updateitem', this.item)
+      this.mutableItem.votes -= 1
+      this.$emit('updateitem', this.mutableItem)
     }
   }
 }
@@ -40,6 +54,6 @@ export default {
 
 <style scoped>
 .btn {
-  background-color: #007BAA;
+  background-color: #007baa;
 }
 </style>

@@ -25,7 +25,7 @@ describe('NewsItem.vue', () => {
         upvoteButton.trigger('click')
         await newsItem.vm.$nextTick()
 
-        expect(newsItem.props().item.votes).toBe(1)
+        expect(newsItem.vm._data.mutableItem.votes).toBe(1)
       })
     })
 
@@ -35,7 +35,7 @@ describe('NewsItem.vue', () => {
         upvoteButton.trigger('click')
         await newsItem.vm.$nextTick()
 
-        expect(newsItem.props().item.votes).toBe(-1)
+        expect(newsItem.vm._data.mutableItem.votes).toBe(-1)
       })
     })
   })
