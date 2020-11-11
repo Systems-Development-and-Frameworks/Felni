@@ -1,47 +1,77 @@
+import { NewsListDB } from './newsListDB'
 const { ApolloServer, gql } = require('apollo-server')
 
-// A schema is a collection of type definitions (hence "typeDefs")
-// that together define the "shape" of queries that are executed against
-// your data.
 const typeDefs = gql`
-  # Comments in GraphQL strings (such as this one) start with the hash (#) symbol.
-
-  # This "Book" type defines the queryable fields for every book in our data source.
-  type Book {
-    title: String
-    author: String
+  type Post {
+    id: ID!
+    title: String!
+    votes: Int!
+    author: User!
   }
 
-  # The "Query" type is special: it lists all of the available queries that
-  # clients can execute, along with the return type for each. In this
-  # case, the "books" query returns an array of zero or more Books (defined above).
+  type User {
+    name: ID!
+    posts: [Post]
+  }
+
   type Query {
-    books: [Book]
+    posts: [Post]
+    users: [User]
+  }
+
+  type Mutation {
+    write(post: PostInput!): Post
+    # 🚀 OPTIONAL
+    # delete(id: ID!): Post
+
+    # ⚠️ FIXME in exercise #4
+    # mock voter until we have authentication
+    upvote(id: ID!, voter: UserInput!): Post
+
+    # 🚀 OPTIONAL
+    # downvote(id: ID!, voter: UserInput!): Post
+  }
+
+  input PostInput {
+    title: String!
+
+    # ⚠️ FIXME in exercise #4
+    # mock author until we have authentication
+    author: UserInput!
+  }
+
+  input UserInput {
+    name: String!
   }
 `
 
-const books = [
-  {
-    title: 'The Awakening',
-    author: 'Kate Chopin'
-  },
-  {
-    title: 'City of Glass',
-    author: 'Paul Auster'
-  }
-]
-
-// Resolvers define the technique for fetching the types defined in the
-// schema. This resolver retrieves books from the "books" array above.
 const resolvers = {
+  // for Post and User we can -maybe- use default resolvers 
   Query: {
-    books: () => books
+    posts: (parent, { newsId }, context, info) => {
+      context.dataSources.newsList.getNews(newsId)
+    },
+    users: (parent, { userId }, context, info) => {
+      context.dataSources.newsList.getUser(userId)
+    }
+  },
+  Mutation: {
+    write: (parent, { post }, context, info) => {
+      return context.dataSources.newsList.addNews(post)
+    },
+    upvote: (parent, { newsId, voter }, context, info) => {
+      return context.dataSources.newsList.upvote(newsId, voter)
+    }
   }
 }
 
-// The ApolloServer constructor requires two parameters: your schema
-// definition and your set of resolvers.
-const server = new ApolloServer({ typeDefs, resolvers })
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  dataSources: () => ({
+    newsList: new NewsListDB()
+  })
+})
 
 // The `listen` method launches a web server.
 server.listen().then(({ url }) => {
