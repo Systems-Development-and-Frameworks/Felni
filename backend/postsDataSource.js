@@ -1,17 +1,20 @@
-import { DataSource } from 'apollo-datasource'
-import { InMemoryLRUCache } from 'apollo-server-caching'
-const crypto = require('crypto')
+import InMemoryLRUCache from 'apollo-server-caching'
+import crypto from 'crypto'
+import pkg from 'apollo-datasource'
+const { DataSource } = pkg
 
 // DataSource without DBClient and hard coded data
 // eslint-disable-next-line no-unused-vars
-class NewsListDataSource extends DataSource {
+export class PostsDataSource extends DataSource {
   constructor () {
     super()
 
     this.items = [
-      { id: crypto.randomBytes(16).toString('hex'), title: 'Item 1', votes: 0, author: { name: 1, posts: [] } },
-      { id: crypto.randomBytes(16).toString('hex'), title: 'Item 2', votes: 0, author: { name: 2, posts: [] } }
+      { id: crypto.randomBytes(16).toString('hex'), title: 'Item 1', votes: 0, author: { name: crypto.randomBytes(16).toString('hex'), posts: [] } },
+      { id: crypto.randomBytes(16).toString('hex'), title: 'Item 2', votes: 0, author: { name: crypto.randomBytes(16).toString('hex'), posts: [] } }
     ]
+    this.items[0].author.posts.push(this.items[0])
+    this.items[1].author.posts.push(this.items[1])
   }
 
   // The initialize() method is called automatically by Apollo Server.

@@ -13,8 +13,12 @@ This is the homework repository for the group Felni from Felix and Nicolas.
 
 ### Exercise 1:
 
-- Link to folder: [a relative link](./news-list)
+- Link to folder: [News-List Web App](./webapp)
 
 ### Exercise 2:
 
-- Link to folder: [News-List Web App](./news-list)
+- Link to folder: [News-List Web App](./webapp)
+
+### Exercise 2:
+
+- Link to folder: [Apollo GraphQL Backend](./backend)

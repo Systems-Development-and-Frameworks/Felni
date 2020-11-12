@@ -6,11 +6,13 @@
   "scripts": {
     "test": "jest",
     "lint": "eslint *.js",
-    "lint:fix": "eslint *.js --fix"
+    "lint:fix": "eslint *.js --fix",
+    "start" : "node index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "type": "module",
   "dependencies": {
     "@types/jest": "^26.0.15",
     "apollo-datasource": "^0.7.2",

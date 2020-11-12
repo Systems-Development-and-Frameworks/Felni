@@ -1,5 +1,6 @@
-import { NewsListDB } from './newsListDB'
-const { ApolloServer, gql } = require('apollo-server')
+import { PostsDB } from './postsDB.js'
+import pkg from 'apollo-server'
+const { ApolloServer, gql } = pkg
 
 const typeDefs = gql`
   type Post {
@@ -49,15 +50,15 @@ const resolvers = {
   // for Post and User we can -maybe- use default resolvers
   Query: {
     posts: (parent, { newsId }, context, info) => {
-      context.dataSources.newsList.getNews(newsId)
+      return context.dataSources.newsList.getPosts()
     },
     users: (parent, { userId }, context, info) => {
-      context.dataSources.newsList.getUser(userId)
+      return context.dataSources.newsList.getUsers()
     }
   },
   Mutation: {
     write: (parent, { post }, context, info) => {
-      return context.dataSources.newsList.addNews(post)
+      return context.dataSources.newsList.addPost(post)
     },
     upvote: (parent, { newsId, voter }, context, info) => {
       return context.dataSources.newsList.upvote(newsId, voter)
@@ -69,7 +70,7 @@ const server = new ApolloServer({
   typeDefs,
   resolvers,
   dataSources: () => ({
-    newsList: new NewsListDB()
+    newsList: new PostsDB()
   })
 })
 
