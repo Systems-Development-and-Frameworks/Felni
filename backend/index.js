@@ -46,7 +46,7 @@ const typeDefs = gql`
 `
 
 const resolvers = {
-  // for Post and User we can -maybe- use default resolvers 
+  // for Post and User we can -maybe- use default resolvers
   Query: {
     posts: (parent, { newsId }, context, info) => {
       context.dataSources.newsList.getNews(newsId)

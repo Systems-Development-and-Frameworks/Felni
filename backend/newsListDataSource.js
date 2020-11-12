@@ -1,42 +1,42 @@
 import { DataSource } from 'apollo-datasource'
 import { InMemoryLRUCache } from 'apollo-server-caching'
-const crypto = require("crypto");
+const crypto = require('crypto')
 
 // DataSource without DBClient and hard coded data
+// eslint-disable-next-line no-unused-vars
 class NewsListDataSource extends DataSource {
-  constructor() {
+  constructor () {
     super()
 
     this.items = [
-        { id: crypto.randomBytes(16).toString("hex"), title: 'Item 1', votes: 0, author: {name: 1, posts: []} },
-        { id: crypto.randomBytes(16).toString("hex"), title: 'Item 2', votes: 0, author: {name: 2, posts: []} }
+      { id: crypto.randomBytes(16).toString('hex'), title: 'Item 1', votes: 0, author: { name: 1, posts: [] } },
+      { id: crypto.randomBytes(16).toString('hex'), title: 'Item 2', votes: 0, author: { name: 2, posts: [] } }
     ]
   }
 
   // The initialize() method is called automatically by Apollo Server.
-  initialize({ context, cache } = {}) {
+  initialize ({ context, cache } = {}) {
     this.context = context
     this.cache = cache || new InMemoryLRUCache()
   }
 
-  get(id) {
+  get (id) {
     const item = this.items.find(item => item.id === id)
     return item
   }
 
-  update(id, newItem) {
+  update (id, newItem) {
     this.items = this.items.map((item) => id === item.id ? newItem : item)
   }
 
-  remove(id) {
+  remove (id) {
     this.items = this.items.filter((item) => {
-        return item.id !== id
-      })
+      return item.id !== id
+    })
   }
 
-  add(newItem) {
+  add (newItem) {
     // How to deal with author ?
-    this.items.push({id: crypto.randomBytes(16).toString("hex"), ...newItem})
+    this.items.push({ id: crypto.randomBytes(16).toString('hex'), ...newItem })
   }
-
 }
