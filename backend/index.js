@@ -1,5 +1,6 @@
-import { PostsDB } from './postsDB.js'
+import { PostsDataSource } from './postsDataSource.js'
 import pkg from 'apollo-server'
+import crypto from 'crypto'
 const { ApolloServer, gql } = pkg
 
 const typeDefs = gql`
@@ -50,27 +51,34 @@ const resolvers = {
   // for Post and User we can -maybe- use default resolvers
   Query: {
     posts: (parent, { newsId }, context, info) => {
-      return context.dataSources.newsList.getPosts()
+      return context.dataSources.posts.getPosts()
     },
     users: (parent, { userId }, context, info) => {
-      return context.dataSources.newsList.getUsers()
+      return context.dataSources.posts.getUsers()
     }
   },
   Mutation: {
     write: (parent, { post }, context, info) => {
-      return context.dataSources.newsList.addPost(post)
+      return context.dataSources.posts.addPost(post)
     },
     upvote: (parent, { newsId, voter }, context, info) => {
-      return context.dataSources.newsList.upvote(newsId, voter)
+      return context.dataSources.posts.upvote(newsId, voter)
     }
   }
 }
+
+const items = [
+  { id: crypto.randomBytes(16).toString('hex'), title: 'Item 1', votes: 0, author: { name: crypto.randomBytes(16).toString('hex'), posts: [] } },
+  { id: crypto.randomBytes(16).toString('hex'), title: 'Item 2', votes: 0, author: { name: crypto.randomBytes(16).toString('hex'), posts: [] } }
+]
+items[0].author.posts.push(items[0])
+items[1].author.posts.push(items[1])
 
 const server = new ApolloServer({
   typeDefs,
   resolvers,
   dataSources: () => ({
-    newsList: new PostsDB()
+    posts: new PostsDataSource(items)
   })
 })
 

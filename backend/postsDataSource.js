@@ -1,26 +1,20 @@
-import InMemoryLRUCache from 'apollo-server-caching'
 import crypto from 'crypto'
 import pkg from 'apollo-datasource'
 const { DataSource } = pkg
 
-// DataSource without DBClient and hard coded data
-// eslint-disable-next-line no-unused-vars
 export class PostsDataSource extends DataSource {
-  constructor () {
+  constructor (items) {
     super()
 
-    this.items = [
-      { id: crypto.randomBytes(16).toString('hex'), title: 'Item 1', votes: 0, author: { name: crypto.randomBytes(16).toString('hex'), posts: [] } },
-      { id: crypto.randomBytes(16).toString('hex'), title: 'Item 2', votes: 0, author: { name: crypto.randomBytes(16).toString('hex'), posts: [] } }
-    ]
-    this.items[0].author.posts.push(this.items[0])
-    this.items[1].author.posts.push(this.items[1])
+    this.items = items
   }
 
-  // The initialize() method is called automatically by Apollo Server.
-  initialize ({ context, cache } = {}) {
-    this.context = context
-    this.cache = cache || new InMemoryLRUCache()
+  getUsers () {
+    return [...new Set(this.items.map(item => item.author))]
+  }
+
+  getPosts () {
+    return this.items
   }
 
   get (id) {
