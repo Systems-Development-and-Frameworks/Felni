@@ -1,8 +1,9 @@
-import crypto from 'crypto'
-import pkg from 'apollo-datasource'
-const { DataSource } = pkg
+import { DataSource } from 'apollo-datasource'
+import { v4 as uuidv4 } from 'uuid'
 
 export class PostsDataSource extends DataSource {
+  posts
+  users
   constructor (posts, users) {
     super()
 
@@ -33,12 +34,12 @@ export class PostsDataSource extends DataSource {
   addPost (newPost) {
     const foundUser = this.getUsers().find(user => user.name === newPost.author.name)
     if (foundUser) {
-      const item = { id: crypto.randomBytes(16).toString('hex'), title: newPost.title, votes: 0, voters: [], author: foundUser }
+      const item = { id: uuidv4(), title: newPost.title, votes: 0, voters: [], author: foundUser }
       foundUser.posts.push(item)
       this.posts.push(item)
       return item
     } else {
-      const item = { id: crypto.randomBytes(16).toString('hex'), title: newPost.title, votes: 0, voters: [], author: {} }
+      const item = { id: uuidv4(), title: newPost.title, votes: 0, voters: [], author: {} }
       const user = { name: newPost.author.name, posts: [item] }
       item.author = user
       this.users.push(user)
