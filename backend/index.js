@@ -67,23 +67,24 @@ const resolvers = {
   }
 }
 
-const items = [
+// Initial data
+const postData = [
   { id: crypto.randomBytes(16).toString('hex'), title: 'Item 1', votes: 0, voters: [], author: { } },
   { id: crypto.randomBytes(16).toString('hex'), title: 'Item 2', votes: 0, voters: [], author: { } }
 ]
-const users = [
-  { name: crypto.randomBytes(16).toString('hex'), posts: [items[0]] },
-  { name: crypto.randomBytes(16).toString('hex'), posts: [items[1]] }
+const userData = [
+  { name: crypto.randomBytes(16).toString('hex'), posts: [postData[0]] },
+  { name: crypto.randomBytes(16).toString('hex'), posts: [postData[1]] }
 ]
 
-items[0].author = users[0]
-items[1].author = users[1]
+postData[0].author = userData[0]
+postData[1].author = userData[1]
 
 const server = new ApolloServer({
   typeDefs,
   resolvers,
   dataSources: () => ({
-    posts: new PostsDataSource(items, users)
+    posts: new PostsDataSource(postData, userData)
   })
 })
 
