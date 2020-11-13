@@ -3,37 +3,44 @@ import pkg from 'apollo-datasource'
 const { DataSource } = pkg
 
 export class PostsDataSource extends DataSource {
-  constructor (items) {
+  constructor (items, users) {
     super()
 
     this.items = items
+    this.users = users
   }
 
   getUsers () {
-    return [...new Set(this.items.map(item => item.author))]
+    return this.users
   }
 
   getPosts () {
     return this.items
   }
 
-  get (id) {
-    const item = this.items.find(item => item.id === id)
-    return item
+  upvote (postId, voter) {
+    const foundItem = this.getPosts().find(item => item.id === postId)
+    const foundUser = this.getUsers().find(user => user.name === voter.name)
+    if (foundItem && foundUser) {
+      foundItem.votes += 1
+    }
+    return foundItem
   }
 
-  update (id, newItem) {
-    this.items = this.items.map((item) => id === item.id ? newItem : item)
-  }
-
-  remove (id) {
-    this.items = this.items.filter((item) => {
-      return item.id !== id
-    })
-  }
-
-  add (newItem) {
-    // How to deal with author ?
-    this.items.push({ id: crypto.randomBytes(16).toString('hex'), ...newItem })
+  addPost (newItem) {
+    const foundUser = this.getUsers().find(user => user.name === newItem.author.name)
+    if (foundUser) {
+      const item = { id: crypto.randomBytes(16).toString('hex'), title: newItem.title, votes: 0, author: foundUser }
+      foundUser.posts.push(item)
+      this.items.push(item)
+      return item
+    } else {
+      const item = { id: crypto.randomBytes(16).toString('hex'), title: newItem.title, votes: 0, author: {} }
+      const user = { name: newItem.author.name, posts: [item] }
+      item.author = user
+      this.users.push(user)
+      this.items.push(item)
+      return item
+    }
   }
 }

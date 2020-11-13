@@ -61,24 +61,29 @@ const resolvers = {
     write: (parent, { post }, context, info) => {
       return context.dataSources.posts.addPost(post)
     },
-    upvote: (parent, { newsId, voter }, context, info) => {
-      return context.dataSources.posts.upvote(newsId, voter)
+    upvote: (parent, { id, voter }, context, info) => {
+      return context.dataSources.posts.upvote(id, voter)
     }
   }
 }
 
 const items = [
-  { id: crypto.randomBytes(16).toString('hex'), title: 'Item 1', votes: 0, author: { name: crypto.randomBytes(16).toString('hex'), posts: [] } },
-  { id: crypto.randomBytes(16).toString('hex'), title: 'Item 2', votes: 0, author: { name: crypto.randomBytes(16).toString('hex'), posts: [] } }
+  { id: crypto.randomBytes(16).toString('hex'), title: 'Item 1', votes: 0, author: { } },
+  { id: crypto.randomBytes(16).toString('hex'), title: 'Item 2', votes: 0, author: { } }
 ]
-items[0].author.posts.push(items[0])
-items[1].author.posts.push(items[1])
+const users = [
+  { name: crypto.randomBytes(16).toString('hex'), posts: [items[0]] },
+  { name: crypto.randomBytes(16).toString('hex'), posts: [items[1]] }
+]
+
+items[0].author = users[0]
+items[1].author = users[1]
 
 const server = new ApolloServer({
   typeDefs,
   resolvers,
   dataSources: () => ({
-    posts: new PostsDataSource(items)
+    posts: new PostsDataSource(items, users)
   })
 })
 
