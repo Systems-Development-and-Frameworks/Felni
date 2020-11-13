@@ -22,7 +22,10 @@ export class PostsDataSource extends DataSource {
     const foundItem = this.getPosts().find(item => item.id === postId)
     const foundUser = this.getUsers().find(user => user.name === voter.name)
     if (foundItem && foundUser) {
-      foundItem.votes += 1
+      if (!foundItem.voters.includes(foundUser.name)) {
+        foundItem.votes += 1
+        foundItem.voters.push(foundUser.name)
+      }
     }
     return foundItem
   }
@@ -30,12 +33,12 @@ export class PostsDataSource extends DataSource {
   addPost (newItem) {
     const foundUser = this.getUsers().find(user => user.name === newItem.author.name)
     if (foundUser) {
-      const item = { id: crypto.randomBytes(16).toString('hex'), title: newItem.title, votes: 0, author: foundUser }
+      const item = { id: crypto.randomBytes(16).toString('hex'), title: newItem.title, votes: 0, voters: [], author: foundUser }
       foundUser.posts.push(item)
       this.items.push(item)
       return item
     } else {
-      const item = { id: crypto.randomBytes(16).toString('hex'), title: newItem.title, votes: 0, author: {} }
+      const item = { id: crypto.randomBytes(16).toString('hex'), title: newItem.title, votes: 0, voters: [], author: {} }
       const user = { name: newItem.author.name, posts: [item] }
       item.author = user
       this.users.push(user)

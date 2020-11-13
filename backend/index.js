@@ -68,8 +68,8 @@ const resolvers = {
 }
 
 const items = [
-  { id: crypto.randomBytes(16).toString('hex'), title: 'Item 1', votes: 0, author: { } },
-  { id: crypto.randomBytes(16).toString('hex'), title: 'Item 2', votes: 0, author: { } }
+  { id: crypto.randomBytes(16).toString('hex'), title: 'Item 1', votes: 0, voters: [], author: { } },
+  { id: crypto.randomBytes(16).toString('hex'), title: 'Item 2', votes: 0, voters: [], author: { } }
 ]
 const users = [
   { name: crypto.randomBytes(16).toString('hex'), posts: [items[0]] },
