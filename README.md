@@ -19,6 +19,6 @@ This is the homework repository for the group Felni from Felix and Nicolas.
 
 - Link to folder: [News-List Web App](./webapp)
 
-### Exercise 2:
+### Exercise 3:
 
 - Link to folder: [Apollo GraphQL Backend](./backend)
