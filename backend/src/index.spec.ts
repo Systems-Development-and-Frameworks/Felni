@@ -34,7 +34,7 @@ describe('Test apollo server queries', () => {
       { id: 'post1', title: 'Item 1', votes: 0, voters: [], author: {} }
     ]
     const userData = [
-      { name: 'user1', posts: [postData[0]], }
+      { name: 'user1', posts: [postData[0]] }
     ]
     postData[0].author = userData[0]
 
@@ -58,7 +58,7 @@ describe('Test apollo server queries', () => {
     ]
     const userData = [
       { name: 'user1', posts: [postData[0]] },
-      { name: 'user2', posts: [], }
+      { name: 'user2', posts: [] }
     ]
     postData[0].author = userData[0]
 
@@ -69,13 +69,13 @@ describe('Test apollo server queries', () => {
         posts: new PostsDataSource(postData, userData)
       })
     })
-    //const UPVOTE = 'mutation ($id: ID!, $voter: UserInput!) { upvote(id: $id, voter: $voter) { votes}}'
-    //const mutationVariables = {$id: "post1", $voter: {name: "user2"}}
+    // const UPVOTE = 'mutation ($id: ID!, $voter: UserInput!) { upvote(id: $id, voter: $voter) { votes}}'
+    // const mutationVariables = {$id: "post1", $voter: {name: "user2"}}
     const UPVOTE = 'mutation { upvote(id: "post1", voter: {name: "user2"}) { votes}}'
-    const { mutate  } = createTestClient(server)
-    const res = await mutate ({ mutation: UPVOTE/*, variables: mutationVariables */})
+    const { mutate } = createTestClient(server)
+    const res = await mutate({ mutation: UPVOTE/*, variables: mutationVariables */ })
     expect(res.data.upvote.votes).toEqual(1)
-    const newRes = await mutate ({ mutation: UPVOTE/*, variables: mutationVariables */})
+    const newRes = await mutate({ mutation: UPVOTE/*, variables: mutationVariables */ })
     expect(newRes.data.upvote.votes).toEqual(1)
   })
 
@@ -95,12 +95,12 @@ describe('Test apollo server queries', () => {
         posts: new PostsDataSource(postData, userData)
       })
     })
-    //const ADD_POST = 'mutation ($post: Post!) { write(post: $post) { title author { name } }}'
-    //const mutationVariables = {title: "TestTitle", author: {name: "user2"}}
+    // const ADD_POST = 'mutation ($post: Post!) { write(post: $post) { title author { name } }}'
+    // const mutationVariables = {title: "TestTitle", author: {name: "user2"}}
     const ADD_POST = 'mutation { write(post: {title: "TestTitle", author: {name: "user2"}}) { title author { name }}}'
-    const { mutate  } = createTestClient(server)
-    const res = await mutate ({ mutation: ADD_POST/*, variables: mutationVariables */})
-    expect(res.data.write.title).toEqual("TestTitle")
-    expect(res.data.write.author.name).toEqual("user2")
+    const { mutate } = createTestClient(server)
+    const res = await mutate({ mutation: ADD_POST/*, variables: mutationVariables */ })
+    expect(res.data.write.title).toEqual('TestTitle')
+    expect(res.data.write.author.name).toEqual('user2')
   })
 })
