@@ -51,6 +51,16 @@ export class PostsDataSource extends DataSource {
     }
   }
 
+  async login (email, password) {
+    const foundUser = this.getUsers().find(user => user.email === email)
+
+    if(foundUser) {
+      if(await bcrypt.compare(password, foundUser.password)) {
+        return jwt.sign({ id: foundUser.id }, process.env.JWTSECRET, { algorithm: 'HS256' })
+      }
+    }
+  }
+
   async addUser (name, email, password) {
     if (password.length >= 8) {
       const foundUser = this.getUsers().find(user => user.email === email)

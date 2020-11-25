@@ -17,6 +17,9 @@ export const resolvers = {
     },
     signup: (parent, { name, email, password }, context, info) => {
       return context.dataSources.posts.addUser(name, email, password)
+    },
+    login: (parent, { email, password }, context, info) => {
+      return context.dataSources.posts.login(email, password)
     }
   }
 }
