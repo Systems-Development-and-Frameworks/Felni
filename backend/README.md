@@ -1,5 +1,6 @@
 # Apollo Backend
 
+Create a .env file in the root backend folder and add a secret JWTSECRET for signing the JWT token (e.g. JWTSECRET=yoursecret)
 ## Project setup
 ```
 npm install

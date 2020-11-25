@@ -14,6 +14,9 @@ export const resolvers = {
     },
     upvote: (parent, { id, voter }, context, info) => {
       return context.dataSources.posts.upvote(id, voter)
+    },
+    signup: (parent, { name, email, password }, context, info) => {
+      return context.dataSources.posts.addUser(name, email, password)
     }
   }
 }

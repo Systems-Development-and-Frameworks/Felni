@@ -6,12 +6,12 @@ import { v4 as uuidv4 } from 'uuid'
 
 // Initial data
 const postData = [
-  { id: uuidv4(), title: 'Item 1', votes: 0, voters: [], author: { } },
-  { id: uuidv4(), title: 'Item 2', votes: 0, voters: [], author: { } }
+  { id: uuidv4(), title: 'Item 1', votes: 0, voters: [], author: {} },
+  { id: uuidv4(), title: 'Item 2', votes: 0, voters: [], author: {} }
 ]
 const userData = [
-  { name: uuidv4(), posts: [postData[0]] },
-  { name: uuidv4(), posts: [postData[1]] }
+  { id: uuidv4(), name: 'User 1', email: 'user1@example.org', posts: [postData[0]] },
+  { id: uuidv4(), name: 'User 2', email: 'user2@example.org', posts: [postData[1]] }
 ]
 
 postData[0].author = userData[0]
