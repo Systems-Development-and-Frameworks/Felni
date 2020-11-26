@@ -113,10 +113,11 @@ describe('Test apollo server queries', () => {
     let server = setupServer(postData, userData, 'invalidToken')
     const LOGIN = 'mutation {  login (email: "user1@example.org", password: "user1password") }'
     const res = await server.mutate({ mutation: LOGIN })
-
+    console.log(res)
     server = setupServer(postData, userData, res.data.login)
     const UPVOTE = 'mutation { upvote(id: "post1") { votes }}'
     const resUpvote = await server.mutate({ mutation: UPVOTE })
+    console.log(resUpvote)
     expect(resUpvote.errors).toBeUndefined()
     expect(resUpvote.data.upvote.votes).toEqual(1)
   })
