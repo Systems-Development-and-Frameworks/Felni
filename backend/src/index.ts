@@ -4,7 +4,7 @@ import { typeDefs } from './typeDefs'
 import { ApolloServer } from 'apollo-server'
 import { v4 as uuidv4 } from 'uuid'
 import { applyMiddleware } from 'graphql-middleware'
-import { rule, shield, deny, allow} from 'graphql-shield'
+import { rule, shield, deny, allow } from 'graphql-shield'
 import { makeExecutableSchema } from 'graphql-tools'
 
 const jwt = require('jsonwebtoken')
@@ -23,7 +23,7 @@ const userData = [
 postData[0].author = userData[0]
 postData[1].author = userData[1]
 
-function createContext({ req }) {
+function createContext ({ req }) {
   let token = req.headers.authorization || ''
   token = token.replace('Bearer ', '')
   try {
@@ -39,8 +39,8 @@ function createContext({ req }) {
 
 const isAuthenticated = rule({ cache: 'contextual' })(
   async (parent, args, context, info) => {
-    return !!context.dataSources.posts.getUsers((user => user.id === context.decodedJwt.payload.id))
-  },
+    return !!context.dataSources.posts.getUsers(user => user.id === context.decodedJwt.payload.id)
+  }
 )
 
 const permissions = shield({
@@ -56,7 +56,7 @@ const permissions = shield({
     write: isAuthenticated,
     upvote: isAuthenticated
   }
-});
+})
 
 const schema = makeExecutableSchema({ typeDefs, resolvers })
 
