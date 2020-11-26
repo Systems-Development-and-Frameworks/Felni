@@ -18,13 +18,23 @@ export class PostsDataSource extends DataSource {
     return this.users
   }
 
+  existsUser (id) {
+    if (this.users.find(user => user.id === id)) {
+      console.log('true')
+      return true
+    } else {
+      console.log('false')
+      return false
+    }
+  }
+
   getPosts () {
     return this.posts
   }
 
-  upvote (postId, voter) {
+  upvote (postId, userId) {
     const foundItem = this.getPosts().find(item => item.id === postId)
-    const foundUser = this.getUsers().find(user => user.id === voter.id)
+    const foundUser = this.getUsers().find(user => user.id === userId)
     if (foundItem && foundUser) {
       if (!foundItem.voters.includes(foundUser.id)) {
         foundItem.votes += 1
@@ -34,40 +44,34 @@ export class PostsDataSource extends DataSource {
     return foundItem
   }
 
-  addPost (newPost) {
-    const foundUser = this.getUsers().find(user => user.name === newPost.author.name)
+  addPost (newPost, userId) {
+    const foundUser = this.getUsers().find(user => user.id === userId)
     if (foundUser) {
       const item = { id: uuidv4(), title: newPost.title, votes: 0, voters: [], author: foundUser }
       foundUser.posts.push(item)
       this.posts.push(item)
       return item
-    } else {
-      const item = { id: uuidv4(), title: newPost.title, votes: 0, voters: [], author: {} }
-      const user = { name: newPost.author.name, posts: [item] }
-      item.author = user
-      this.users.push(user)
-      this.posts.push(item)
-      return item
     }
+    return null
   }
 
-  async login (email, password) {
+  login (email, password) {
     const foundUser = this.getUsers().find(user => user.email === email)
 
     if (foundUser) {
-      if (await bcrypt.compare(password, foundUser.password)) {
+      if (bcrypt.compareSync(password, foundUser.password)) {
         return jwt.sign({ id: foundUser.id }, process.env.JWTSECRET, { algorithm: 'HS256' })
       }
     }
   }
 
-  async addUser (name, email, password) {
+  addUser (name, email, password) {
     if (password.length >= 8) {
       const foundUser = this.getUsers().find(user => user.email === email)
       if (foundUser) {
         return null
       } else {
-        const user = { id: uuidv4(), name: name, email: email, password: await bcrypt.hash(password, 10), posts: [] }
+        const user = { id: uuidv4(), name: name, email: email, password: bcrypt.hashSync(password, 10), posts: [] }
         this.users.push(user)
         return jwt.sign({ id: user.id }, process.env.JWTSECRET, { algorithm: 'HS256' })
       }
