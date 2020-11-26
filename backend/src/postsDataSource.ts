@@ -20,10 +20,8 @@ export class PostsDataSource extends DataSource {
 
   existsUser (id) {
     if (this.users.find(user => user.id === id)) {
-      console.log('true')
       return true
     } else {
-      console.log('false')
       return false
     }
   }
