@@ -34,9 +34,10 @@ jobs:
       working-directory: ./backend
       run: |
         touch .env
-        echo JWTSECRET=githubactions >> .env
+        echo JWTSECRET=$JWTSECRET >> .env
         npm install
         npm run test
         npm run lint
       env:
-        CI: true
+        CI: true,
+        JWTSECRET: ${{ secrets.JWTSECRET }}
