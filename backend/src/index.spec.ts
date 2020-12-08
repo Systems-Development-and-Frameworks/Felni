@@ -111,7 +111,7 @@ describe('Test apollo server queries', () => {
       { id: 'userid1', name: 'user1', email: 'user1@example.org', password: hashSync('user1password', 10), posts: [postData[0]] }
     ]
     postData[0].author = userData[0]
-    let server = setupServer(postData, userData, 'invalidToken')
+    let server = setupServer(postData, userData)
     const LOGIN = 'mutation {  login (email: "user1@example.org", password: "user1password") }'
     const res = await server.mutate({ mutation: LOGIN })
     server = setupServer(postData, userData, res.data.login)
