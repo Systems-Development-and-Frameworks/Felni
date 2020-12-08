@@ -33,8 +33,6 @@ jobs:
     - name: Install, test and lint backend
       working-directory: ./backend
       run: |
-        touch .env
-        echo JWTSECRET=$JWTSECRET >> .env
         npm install
         npm run test
         npm run lint

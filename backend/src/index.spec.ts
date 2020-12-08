@@ -6,17 +6,17 @@ import { ApolloServer } from 'apollo-server'
 import { createTestClient } from 'apollo-server-testing'
 import { applyMiddleware } from 'graphql-middleware'
 import { makeExecutableSchema } from 'graphql-tools'
-const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken')
-require('dotenv').config()
+import { JWTSECRET } from './importSecret'
+import { hashSync } from 'bcrypt'
+import { verify } from 'jsonwebtoken'
 
 const testContext = (testToken?) => {
   let token = testToken || ''
   token = token.replace('Bearer ', '')
   try {
-    const decodedJwt = jwt.verify(
+    const decodedJwt = verify(
       token,
-      process.env.JWTSECRET
+      JWTSECRET
     )
     return { decodedJwt }
   } catch (e) {
@@ -41,7 +41,7 @@ describe('Test apollo server queries', () => {
       { id: 'post1', title: 'Item 1', votes: 0, voters: [], author: {} }
     ]
     const userData = [
-      { id: 'userid1', name: 'user1', email: 'user1@example.org', password: bcrypt.hashSync('user1password', 10), posts: [postData[0]] }
+      { id: 'userid1', name: 'user1', email: 'user1@example.org', password: hashSync('user1password', 10), posts: [postData[0]] }
     ]
     postData[0].author = userData[0]
 
@@ -59,7 +59,7 @@ describe('Test apollo server queries', () => {
       { id: 'post1', title: 'Item 1', votes: 0, voters: [], author: {} }
     ]
     const userData = [
-      { id: 'userid1', name: 'user1', email: 'user1@example.org', password: bcrypt.hashSync('user1password', 10), posts: [postData[0]] }
+      { id: 'userid1', name: 'user1', email: 'user1@example.org', password: hashSync('user1password', 10), posts: [postData[0]] }
     ]
     postData[0].author = userData[0]
 
@@ -75,7 +75,7 @@ describe('Test apollo server queries', () => {
       { id: 'post1', title: 'Item 1', votes: 0, voters: [], author: {} }
     ]
     const userData = [
-      { id: 'userid1', name: 'user1', email: 'user1@example.org', password: bcrypt.hashSync('user1password', 10), posts: [postData[0]] }
+      { id: 'userid1', name: 'user1', email: 'user1@example.org', password: hashSync('user1password', 10), posts: [postData[0]] }
     ]
     postData[0].author = userData[0]
 
@@ -92,7 +92,7 @@ describe('Test apollo server queries', () => {
       { id: 'post1', title: 'Item 1', votes: 0, voters: [], author: {} }
     ]
     const userData = [
-      { id: 'userid1', name: 'user1', email: 'user1@example.org', password: bcrypt.hashSync('user1password', 10), posts: [postData[0]] }
+      { id: 'userid1', name: 'user1', email: 'user1@example.org', password: hashSync('user1password', 10), posts: [postData[0]] }
     ]
     postData[0].author = userData[0]
 
@@ -108,7 +108,7 @@ describe('Test apollo server queries', () => {
       { id: 'post1', title: 'Item 1', votes: 0, voters: [], author: {} }
     ]
     const userData = [
-      { id: 'userid1', name: 'user1', email: 'user1@example.org', password: bcrypt.hashSync('user1password', 10), posts: [postData[0]] }
+      { id: 'userid1', name: 'user1', email: 'user1@example.org', password: hashSync('user1password', 10), posts: [postData[0]] }
     ]
     postData[0].author = userData[0]
     let server = setupServer(postData, userData, 'invalidToken')
@@ -126,7 +126,7 @@ describe('Test apollo server queries', () => {
       { id: 'post1', title: 'Item 1', votes: 0, voters: [], author: {} }
     ]
     const userData = [
-      { id: 'userid1', name: 'user1', email: 'user1@example.org', password: bcrypt.hashSync('user1password', 10), posts: [postData[0]] }
+      { id: 'userid1', name: 'user1', email: 'user1@example.org', password: hashSync('user1password', 10), posts: [postData[0]] }
     ]
     postData[0].author = userData[0]
 
@@ -149,7 +149,7 @@ describe('Test apollo server queries', () => {
       { id: 'post1', title: 'Item 1', votes: 0, voters: [], author: {} }
     ]
     const userData = [
-      { id: 'userid1', name: 'user1', email: 'user1@example.org', password: bcrypt.hashSync('user1password', 10), posts: [postData[0]] }
+      { id: 'userid1', name: 'user1', email: 'user1@example.org', password: hashSync('user1password', 10), posts: [postData[0]] }
     ]
     postData[0].author = userData[0]
 
@@ -165,7 +165,7 @@ describe('Test apollo server queries', () => {
       { id: 'post1', title: 'Item 1', votes: 0, voters: [], author: {} }
     ]
     const userData = [
-      { id: 'userid1', name: 'user1', email: 'user1@example.org', password: bcrypt.hashSync('user1password', 10), posts: [postData[0]] }
+      { id: 'userid1', name: 'user1', email: 'user1@example.org', password: hashSync('user1password', 10), posts: [postData[0]] }
     ]
     postData[0].author = userData[0]
 
@@ -182,11 +182,11 @@ describe('Test apollo server queries', () => {
     expect(resAdd.data.write.author.posts.length).toEqual(2)
   })
 
-  it('signup with password shorter than 8 characters return null', async () => {
+  it('signup with password shorter than 8 characters return error', async () => {
     const { mutate } = setupServer([], [])
     const SIGNUP = 'mutation {  signup (name: "testuser", email: "testuser@example.org", password: "short") }'
     const res = await mutate({ mutation: SIGNUP })
-    expect(res.errors).toBeUndefined()
+    expect(res.errors[0].message).toEqual('Not Authorised!')
     expect(res.data.signup).toBeNull()
   })
 
@@ -198,22 +198,22 @@ describe('Test apollo server queries', () => {
     expect(res.data.signup).toEqual(expect.any(String))
   })
 
-  it('trying to signup the same user twice returns null the second time', async () => {
+  it('trying to signup the same user twice returns error the second time', async () => {
     const { mutate } = setupServer([], [])
     const SIGNUP = 'mutation {  signup (name: "testuser", email: "testuser@example.org", password: "password") }'
     await mutate({ mutation: SIGNUP })
     const res = await mutate({ mutation: SIGNUP })
-    expect(res.errors).toBeUndefined()
+    expect(res.errors[0].message).toEqual('Not Authorised!')
     expect(res.data.signup).toBeNull()
   })
 
-  it('trying to login with invalid data returns null', async () => {
+  it('trying to login with invalid password returns error', async () => {
     const { mutate } = setupServer([], [])
     const SIGNUP = 'mutation {  signup (name: "testuser", email: "testuser@example.org", password: "password") }'
     await mutate({ mutation: SIGNUP })
     const LOGIN = 'mutation {  login (email: "testuser@example.org", password: "invalid") }'
     const res = await mutate({ mutation: LOGIN })
-    expect(res.errors).toBeUndefined()
+    expect(res.errors[0].message).toEqual('Not Authorised!')
     expect(res.data.login).toBeNull()
   })
 

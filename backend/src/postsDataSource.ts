@@ -1,8 +1,9 @@
 import { DataSource } from 'apollo-datasource'
 import { v4 as uuidv4 } from 'uuid'
-require('dotenv').config()
-const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken')
+import { sign } from 'jsonwebtoken'
+import { JWTSECRET } from './importSecret'
+import { hashSync, compareSync } from 'bcrypt'
+import { AuthenticationError, UserInputError, ForbiddenError } from 'apollo-server'
 
 export class PostsDataSource extends DataSource {
   posts
@@ -19,11 +20,7 @@ export class PostsDataSource extends DataSource {
   }
 
   existsUser (id) {
-    if (this.users.find(user => user.id === id)) {
-      return true
-    } else {
-      return false
-    }
+    return !!this.users.find(user => user.id === id)
   }
 
   getPosts () {
@@ -57,24 +54,23 @@ export class PostsDataSource extends DataSource {
     const foundUser = this.getUsers().find(user => user.email === email)
 
     if (foundUser) {
-      if (bcrypt.compareSync(password, foundUser.password)) {
-        return jwt.sign({ id: foundUser.id }, process.env.JWTSECRET, { algorithm: 'HS256' })
+      if (compareSync(password, foundUser.password)) {
+        return sign({ id: foundUser.id }, JWTSECRET, { algorithm: 'HS256' })
       }
+      throw new AuthenticationError('Wrong email/password combination')
     }
   }
 
   addUser (name, email, password) {
-    if (password.length >= 8) {
-      const foundUser = this.getUsers().find(user => user.email === email)
-      if (foundUser) {
-        return null
-      } else {
-        const user = { id: uuidv4(), name: name, email: email, password: bcrypt.hashSync(password, 10), posts: [] }
-        this.users.push(user)
-        return jwt.sign({ id: user.id }, process.env.JWTSECRET, { algorithm: 'HS256' })
-      }
-    } else {
-      return null
+    if (password.length < 8) {
+      throw new UserInputError('Password must have at least 8 characters')
     }
+    const foundUser = this.getUsers().find(user => user.email === email)
+    if (foundUser) {
+      throw new ForbiddenError('Email already taken by another user')
+    }
+    const user = { id: uuidv4(), name: name, email: email, password: hashSync(password, 10), posts: [] }
+    this.users.push(user)
+    return sign({ id: user.id }, JWTSECRET, { algorithm: 'HS256' })
   }
 }

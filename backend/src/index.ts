@@ -7,7 +7,7 @@ import { ApolloServer } from 'apollo-server'
 import { v4 as uuidv4 } from 'uuid'
 import { applyMiddleware } from 'graphql-middleware'
 import { makeExecutableSchema } from 'graphql-tools'
-const bcrypt = require('bcrypt')
+import { hashSync } from 'bcrypt'
 
 // Initial data
 const postData = [
@@ -15,8 +15,8 @@ const postData = [
   { id: uuidv4(), title: 'Item 2', votes: 0, voters: [], author: {} }
 ]
 const userData = [
-  { id: uuidv4(), name: 'User 1', email: 'user1@example.org', password: bcrypt.hashSync('user1password', 10), posts: [postData[0]] },
-  { id: uuidv4(), name: 'User 2', email: 'user2@example.org', password: bcrypt.hashSync('user2password', 10), posts: [postData[1]] }
+  { id: uuidv4(), name: 'User 1', email: 'user1@example.org', password: hashSync('user1password', 10), posts: [postData[0]] },
+  { id: uuidv4(), name: 'User 2', email: 'user2@example.org', password: hashSync('user2password', 10), posts: [postData[1]] }
 ]
 
 postData[0].author = userData[0]

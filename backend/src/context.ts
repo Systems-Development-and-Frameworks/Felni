@@ -1,13 +1,13 @@
-const jwt = require('jsonwebtoken')
-require('dotenv').config()
+import { JWTSECRET } from './importSecret'
+import { verify } from 'jsonwebtoken'
 
 export function createContext ({ req }) {
   let token = req?.headers?.authorization || ''
   token = token.replace('Bearer ', '')
   try {
-    const decodedJwt = jwt.verify(
+    const decodedJwt = verify(
       token,
-      process.env.JWTSECRET
+      JWTSECRET
     )
     return { decodedJwt }
   } catch (e) {
