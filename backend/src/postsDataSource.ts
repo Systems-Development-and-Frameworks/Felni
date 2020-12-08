@@ -4,6 +4,8 @@ import { sign } from 'jsonwebtoken'
 import { JWTSECRET } from './importSecret'
 import { hashSync, compareSync } from 'bcrypt'
 import { AuthenticationError, UserInputError, ForbiddenError } from 'apollo-server'
+import { Post } from './post'
+import { User } from './user'
 
 export class PostsDataSource extends DataSource {
   posts
@@ -42,7 +44,7 @@ export class PostsDataSource extends DataSource {
   addPost (newPost, userId) {
     const foundUser = this.getUsers().find(user => user.id === userId)
     if (foundUser) {
-      const item = { id: uuidv4(), title: newPost.title, votes: 0, voters: [], author: foundUser }
+      const item = new Post(uuidv4(), newPost.title, foundUser)
       foundUser.posts.push(item)
       this.posts.push(item)
       return item
@@ -69,7 +71,7 @@ export class PostsDataSource extends DataSource {
     if (foundUser) {
       throw new ForbiddenError('Email already taken by another user')
     }
-    const user = { id: uuidv4(), name: name, email: email, password: hashSync(password, 10), posts: [] }
+    const user = new User(uuidv4(), name, email, hashSync(password, 10))
     this.users.push(user)
     return sign({ id: user.id }, JWTSECRET, { algorithm: 'HS256' })
   }

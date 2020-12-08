@@ -8,17 +8,20 @@ import { v4 as uuidv4 } from 'uuid'
 import { applyMiddleware } from 'graphql-middleware'
 import { makeExecutableSchema } from 'graphql-tools'
 import { hashSync } from 'bcrypt'
+import { Post } from './post'
+import { User } from './user'
 
 // Initial data
 const postData = [
-  { id: uuidv4(), title: 'Item 1', votes: 0, voters: [], author: {} },
-  { id: uuidv4(), title: 'Item 2', votes: 0, voters: [], author: {} }
+  new Post(uuidv4(), 'Item1'),
+  new Post(uuidv4(), 'Item2')
 ]
 const userData = [
-  { id: uuidv4(), name: 'User 1', email: 'user1@example.org', password: hashSync('user1password', 10), posts: [postData[0]] },
-  { id: uuidv4(), name: 'User 2', email: 'user2@example.org', password: hashSync('user2password', 10), posts: [postData[1]] }
+  new User(uuidv4(), 'User1', 'user1@example.org', hashSync('user1password', 10)),
+  new User(uuidv4(), 'User2', 'user2@example.org', hashSync('user2password', 10))
 ]
-
+userData[0].posts.push(postData[0])
+userData[1].posts.push(postData[1])
 postData[0].author = userData[0]
 postData[1].author = userData[1]
 

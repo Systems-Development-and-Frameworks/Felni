@@ -9,7 +9,10 @@ import { makeExecutableSchema } from 'graphql-tools'
 import { JWTSECRET } from './importSecret'
 import { hashSync } from 'bcrypt'
 import { verify } from 'jsonwebtoken'
+import { Post } from './post'
+import { User } from './user'
 
+let posts
 const testContext = (testToken?) => {
   let token = testToken || ''
   token = token.replace('Bearer ', '')
@@ -23,29 +26,28 @@ const testContext = (testToken?) => {
     return {}
   }
 }
-const setupServer = (postData, userData, testToken?) => {
+const setupServerAndReturnTestClient = (postDataSource, testToken?) => {
   const schema = makeExecutableSchema({ typeDefs, resolvers })
   const server = new ApolloServer({
     schema: applyMiddleware(schema, permissions),
     context: testContext(testToken), // not sure if this is the correct way. but we didn`t find another solution to add the token as request (see https://github.com/apollographql/apollo-server/issues/2277)
     dataSources: () => ({
-      posts: new PostsDataSource(postData, userData)
+      posts: postDataSource
     })
   })
   return createTestClient(server)
 }
 
 describe('Test apollo server queries', () => {
-  it('get all posts returns 1 post', async () => {
-    const postData = [
-      { id: 'post1', title: 'Item 1', votes: 0, voters: [], author: {} }
-    ]
-    const userData = [
-      { id: 'userid1', name: 'user1', email: 'user1@example.org', password: hashSync('user1password', 10), posts: [postData[0]] }
-    ]
+  beforeEach(() => {
+    const postData = [new Post('post1', 'Item1')]
+    const userData = [new User('userid1', 'user1', 'user1@example.org', hashSync('user1password', 10))]
     postData[0].author = userData[0]
-
-    const { query } = setupServer(postData, userData)
+    userData[0].posts.push(postData[0])
+    posts = new PostsDataSource(postData, userData)
+  })
+  it('get all posts returns 1 post', async () => {
+    const { query } = setupServerAndReturnTestClient(posts)
     const GET_POSTS = '{ posts { id votes }}'
     const res = await query({ query: GET_POSTS })
     expect(res.errors).toBeUndefined()
@@ -55,15 +57,7 @@ describe('Test apollo server queries', () => {
   })
 
   it('queries are indefinitely nestable', async () => {
-    const postData = [
-      { id: 'post1', title: 'Item 1', votes: 0, voters: [], author: {} }
-    ]
-    const userData = [
-      { id: 'userid1', name: 'user1', email: 'user1@example.org', password: hashSync('user1password', 10), posts: [postData[0]] }
-    ]
-    postData[0].author = userData[0]
-
-    const { query } = setupServer(postData, userData)
+    const { query } = setupServerAndReturnTestClient(posts)
     const GET_POSTS = '{ posts { title author { name posts { title author { name }}}}}'
     const res = await query({ query: GET_POSTS })
     expect(res.errors).toBeUndefined()
@@ -71,15 +65,7 @@ describe('Test apollo server queries', () => {
   })
 
   it('get all user return 1 user', async () => {
-    const postData = [
-      { id: 'post1', title: 'Item 1', votes: 0, voters: [], author: {} }
-    ]
-    const userData = [
-      { id: 'userid1', name: 'user1', email: 'user1@example.org', password: hashSync('user1password', 10), posts: [postData[0]] }
-    ]
-    postData[0].author = userData[0]
-
-    const { query } = setupServer(postData, userData)
+    const { query } = setupServerAndReturnTestClient(posts)
     const GET_USERS = '{ users { name }}'
     const res = await query({ query: GET_USERS })
     expect(res.errors).toBeUndefined()
@@ -88,15 +74,7 @@ describe('Test apollo server queries', () => {
   })
 
   it('upvote a post with invalid token returns error', async () => {
-    const postData = [
-      { id: 'post1', title: 'Item 1', votes: 0, voters: [], author: {} }
-    ]
-    const userData = [
-      { id: 'userid1', name: 'user1', email: 'user1@example.org', password: hashSync('user1password', 10), posts: [postData[0]] }
-    ]
-    postData[0].author = userData[0]
-
-    const { mutate } = setupServer(postData, userData, 'invalidToken')
+    const { mutate } = setupServerAndReturnTestClient(posts, 'invalidToken')
     const UPVOTE = 'mutation { upvote(id: "post1") { votes }}'
     const res = await mutate({ mutation: UPVOTE })
     expect(res.errors.length).toEqual(1)
@@ -104,56 +82,33 @@ describe('Test apollo server queries', () => {
   })
 
   it('upvote a post with valid token increases count', async () => {
-    const postData = [
-      { id: 'post1', title: 'Item 1', votes: 0, voters: [], author: {} }
-    ]
-    const userData = [
-      { id: 'userid1', name: 'user1', email: 'user1@example.org', password: hashSync('user1password', 10), posts: [postData[0]] }
-    ]
-    postData[0].author = userData[0]
-    let server = setupServer(postData, userData)
+    let client = setupServerAndReturnTestClient(posts)
     const LOGIN = 'mutation {  login (email: "user1@example.org", password: "user1password") }'
-    const res = await server.mutate({ mutation: LOGIN })
-    server = setupServer(postData, userData, res.data.login)
+    const res = await client.mutate({ mutation: LOGIN })
+    client = setupServerAndReturnTestClient(posts, res.data.login)
     const UPVOTE = 'mutation { upvote(id: "post1") { votes }}'
-    const resUpvote = await server.mutate({ mutation: UPVOTE })
+    const resUpvote = await client.mutate({ mutation: UPVOTE })
     expect(resUpvote.errors).toBeUndefined()
     expect(resUpvote.data.upvote.votes).toEqual(1)
   })
 
   it('upvote a post two times from the same user only upvotes the post once', async () => {
-    const postData = [
-      { id: 'post1', title: 'Item 1', votes: 0, voters: [], author: {} }
-    ]
-    const userData = [
-      { id: 'userid1', name: 'user1', email: 'user1@example.org', password: hashSync('user1password', 10), posts: [postData[0]] }
-    ]
-    postData[0].author = userData[0]
-
-    let server = setupServer(postData, userData)
+    let client = setupServerAndReturnTestClient(posts)
     const LOGIN = 'mutation {  login (email: "user1@example.org", password: "user1password") }'
-    const res = await server.mutate({ mutation: LOGIN })
+    const res = await client.mutate({ mutation: LOGIN })
 
-    server = setupServer(postData, userData, res.data.login)
+    client = setupServerAndReturnTestClient(posts, res.data.login)
     const UPVOTE = 'mutation { upvote(id: "post1") { votes }}'
-    const resFirstUpvote = await server.mutate({ mutation: UPVOTE })
+    const resFirstUpvote = await client.mutate({ mutation: UPVOTE })
     expect(resFirstUpvote.errors).toBeUndefined()
     expect(resFirstUpvote.data.upvote.votes).toEqual(1)
-    const resSecondUpvote = await server.mutate({ mutation: UPVOTE })
+    const resSecondUpvote = await client.mutate({ mutation: UPVOTE })
     expect(resSecondUpvote.errors).toBeUndefined()
     expect(resSecondUpvote.data.upvote.votes).toEqual(1)
   })
 
   it('add a post with invalid token returns error', async () => {
-    const postData = [
-      { id: 'post1', title: 'Item 1', votes: 0, voters: [], author: {} }
-    ]
-    const userData = [
-      { id: 'userid1', name: 'user1', email: 'user1@example.org', password: hashSync('user1password', 10), posts: [postData[0]] }
-    ]
-    postData[0].author = userData[0]
-
-    const { mutate } = setupServer(postData, userData, 'invalidToken')
+    const { mutate } = setupServerAndReturnTestClient(posts, 'invalidToken')
     const ADD_POST = 'mutation { write(post: { title: "TestTitle" }) { title author { name posts { title }}}}'
     const res = await mutate({ mutation: ADD_POST })
     expect(res.errors.length).toEqual(1)
@@ -161,21 +116,13 @@ describe('Test apollo server queries', () => {
   })
 
   it('add a post from an existing user adds the post to the user', async () => {
-    const postData = [
-      { id: 'post1', title: 'Item 1', votes: 0, voters: [], author: {} }
-    ]
-    const userData = [
-      { id: 'userid1', name: 'user1', email: 'user1@example.org', password: hashSync('user1password', 10), posts: [postData[0]] }
-    ]
-    postData[0].author = userData[0]
-
-    let server = setupServer(postData, userData)
+    let client = setupServerAndReturnTestClient(posts)
     const LOGIN = 'mutation {  login (email: "user1@example.org", password: "user1password") }'
-    const res = await server.mutate({ mutation: LOGIN })
+    const res = await client.mutate({ mutation: LOGIN })
 
-    server = setupServer(postData, userData, res.data.login)
+    client = setupServerAndReturnTestClient(posts, res.data.login)
     const ADD_POST = 'mutation { write(post: { title: "TestTitle" }) { title author { name posts { title }}}}'
-    const resAdd = await server.mutate({ mutation: ADD_POST })
+    const resAdd = await client.mutate({ mutation: ADD_POST })
     expect(resAdd.errors).toBeUndefined()
     expect(resAdd.data.write.title).toEqual('TestTitle')
     expect(resAdd.data.write.author.name).toEqual('user1')
@@ -183,7 +130,7 @@ describe('Test apollo server queries', () => {
   })
 
   it('signup with password shorter than 8 characters return error', async () => {
-    const { mutate } = setupServer([], [])
+    const { mutate } = setupServerAndReturnTestClient(posts)
     const SIGNUP = 'mutation {  signup (name: "testuser", email: "testuser@example.org", password: "short") }'
     const res = await mutate({ mutation: SIGNUP })
     expect(res.errors[0].message).toEqual('Not Authorised!')
@@ -191,7 +138,7 @@ describe('Test apollo server queries', () => {
   })
 
   it('signup with a valid password returns token', async () => {
-    const { mutate } = setupServer([], [])
+    const { mutate } = setupServerAndReturnTestClient(posts)
     const SIGNUP = 'mutation {  signup (name: "testuser", email: "testuser@example.org", password: "password") }'
     const res = await mutate({ mutation: SIGNUP })
     expect(res.errors).toBeUndefined()
@@ -199,7 +146,7 @@ describe('Test apollo server queries', () => {
   })
 
   it('trying to signup the same user twice returns error the second time', async () => {
-    const { mutate } = setupServer([], [])
+    const { mutate } = setupServerAndReturnTestClient(posts)
     const SIGNUP = 'mutation {  signup (name: "testuser", email: "testuser@example.org", password: "password") }'
     await mutate({ mutation: SIGNUP })
     const res = await mutate({ mutation: SIGNUP })
@@ -208,7 +155,7 @@ describe('Test apollo server queries', () => {
   })
 
   it('trying to login with invalid password returns error', async () => {
-    const { mutate } = setupServer([], [])
+    const { mutate } = setupServerAndReturnTestClient(posts)
     const SIGNUP = 'mutation {  signup (name: "testuser", email: "testuser@example.org", password: "password") }'
     await mutate({ mutation: SIGNUP })
     const LOGIN = 'mutation {  login (email: "testuser@example.org", password: "invalid") }'
@@ -218,7 +165,7 @@ describe('Test apollo server queries', () => {
   })
 
   it('trying to login with valid data returns token', async () => {
-    const { mutate } = setupServer([], [])
+    const { mutate } = setupServerAndReturnTestClient(posts)
     const SIGNUP = 'mutation {  signup (name: "testuser", email: "testuser@example.org", password: "password") }'
     await mutate({ mutation: SIGNUP })
     const LOGIN = 'mutation {  login (email: "testuser@example.org", password: "password") }'
