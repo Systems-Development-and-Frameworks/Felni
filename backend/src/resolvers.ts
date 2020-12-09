@@ -10,10 +10,16 @@ export const resolvers = {
   },
   Mutation: {
     write: (parent, { post }, context, info) => {
-      return context.dataSources.posts.addPost(post)
+      return context.dataSources.posts.addPost(post, context.decodedJwt.id)
     },
     upvote: (parent, { id, voter }, context, info) => {
-      return context.dataSources.posts.upvote(id, voter)
+      return context.dataSources.posts.upvote(id, context.decodedJwt.id)
+    },
+    login: (parent, { email, password }, context, info) => {
+      return context.dataSources.posts.login(email, password)
+    },
+    signup: (parent, { name, email, password }, context, info) => {
+      return context.dataSources.posts.addUser(name, email, password)
     }
   }
 }

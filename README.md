@@ -22,3 +22,7 @@ This is the homework repository for the group Felni from Felix and Nicolas.
 ### Exercise 3:
 
 - Link to folder: [Apollo GraphQL Backend](./backend)
+
+### Exercise 4:
+
+- Link to folder: [Apollo GraphQL Backend](./backend)

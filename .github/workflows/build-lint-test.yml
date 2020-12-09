@@ -37,4 +37,5 @@ jobs:
         npm run test
         npm run lint
       env:
-        CI: true
+        CI: true,
+        JWTSECRET: ${{ secrets.JWTSECRET }}
