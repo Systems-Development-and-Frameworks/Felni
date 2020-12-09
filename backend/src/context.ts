@@ -9,7 +9,7 @@ export function createContext ({ req }) {
       token,
       JWTSECRET
     )
-    return { decodedJwt }
+    return { decodedJwt, req } // i think req is required for the middleware permissions to work
   } catch (e) {
     return {}
   }

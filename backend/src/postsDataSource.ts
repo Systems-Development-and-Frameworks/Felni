@@ -17,19 +17,24 @@ export class PostsDataSource extends DataSource {
     this.users = users
   }
 
+  //TODO: can be deleted since it is auto genereted by augmentSchema, Query name: User
   getUsers () {
     return this.users
   }
 
+ //TODO: can not be deleted since it is used in isAuthenticated
   existsUser (id) {
+    //TODO: convert to cypher code
     return !!this.users.find(user => user.id === id)
   }
 
+  //TODO: can be deleted since it is auto genereted by augmentSchema, Query name: Post
   getPosts () {
     return this.posts
   }
 
   upvote (postId, userId) {
+    //TODO: convert to cypher code
     const foundItem = this.getPosts().find(item => item.id === postId)
     const foundUser = this.getUsers().find(user => user.id === userId)
     if (foundItem && foundUser) {
@@ -42,6 +47,7 @@ export class PostsDataSource extends DataSource {
   }
 
   addPost (newPost, userId) {
+    //TODO: convert to cypher code
     const foundUser = this.getUsers().find(user => user.id === userId)
     if (foundUser) {
       const item = new Post(uuidv4(), newPost.title, foundUser)
@@ -53,6 +59,7 @@ export class PostsDataSource extends DataSource {
   }
 
   login (email, password) {
+    //TODO: convert to cypher code
     const foundUser = this.getUsers().find(user => user.email === email)
 
     if (foundUser) {
@@ -64,6 +71,7 @@ export class PostsDataSource extends DataSource {
   }
 
   addUser (name, email, password) {
+    //TODO: convert to cypher code
     if (password.length < 8) {
       throw new UserInputError('Password must have at least 8 characters')
     }
