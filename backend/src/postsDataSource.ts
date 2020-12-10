@@ -8,79 +8,87 @@ import { Post } from './post'
 import { User } from './user'
 
 export class PostsDataSource extends DataSource {
-  posts
-  users
-  constructor (posts, users) {
-    super()
-
-    this.posts = posts
-    this.users = users
+  async getUsers (session) {
+    const txc = session.beginTransaction()
+    const result = await txc.run('MATCH (n:User) RETURN n.email')
+    await txc.commit()
+    return result
   }
 
-  // TODO: can be deleted since it is auto genereted by augmentSchema, Query name: User
-  getUsers () {
-    return this.users
+  async getUserByEmail (session, email) {
+    const txc = session.beginTransaction()
+    const result = await txc.run('MATCH (n:User) WHERE n.email = $email RETURN n', {
+      email: email
+    })
+    await txc.commit()
+    return result
   }
+  // // TODO: can not be deleted since it is used in isAuthenticated
+  // existsUser (id) {
+  //   // TODO: convert to cypher code
+  //   return !!this.users.find(user => user.id === id)
+  // }
 
-  // TODO: can not be deleted since it is used in isAuthenticated
-  existsUser (id) {
-    // TODO: convert to cypher code
-    return !!this.users.find(user => user.id === id)
-  }
+  // upvote (postId, userId) {
+  //   // TODO: convert to cypher code
+  //   const foundItem = this.getPosts().find(item => item.id === postId)
+  //   const foundUser = this.getUsers().find(user => user.id === userId)
+  //   if (foundItem && foundUser) {
+  //     if (!foundItem.voters.includes(foundUser.id)) {
+  //       foundItem.votes += 1
+  //       foundItem.voters.push(foundUser.id)
+  //     }
+  //   }
+  //   return foundItem
+  // }
 
-  // TODO: can be deleted since it is auto genereted by augmentSchema, Query name: Post
-  getPosts () {
-    return this.posts
-  }
+  // addPost (newPost, userId) {
+  //   // TODO: convert to cypher code
+  //   const foundUser = this.getUsers().find(user => user.id === userId)
+  //   if (foundUser) {
+  //     const item = new Post(uuidv4(), newPost.title, foundUser)
+  //     foundUser.posts.push(item)
+  //     this.posts.push(item)
+  //     return item
+  //   }
+  //   return null
+  // }
 
-  upvote (postId, userId) {
-    // TODO: convert to cypher code
-    const foundItem = this.getPosts().find(item => item.id === postId)
-    const foundUser = this.getUsers().find(user => user.id === userId)
-    if (foundItem && foundUser) {
-      if (!foundItem.voters.includes(foundUser.id)) {
-        foundItem.votes += 1
-        foundItem.voters.push(foundUser.id)
-      }
+  async login (email, password, driver) {
+    const session = driver.session()
+    let foundUserProperties
+    await this.getUserByEmail(session, email).then(result => {
+      if (result.records.length === 0) throw new UserInputError('No user found with this email')
+      foundUserProperties = result.records[0]._fields[0].properties
+    })
+    if (compareSync(password, foundUserProperties.password)) {
+      return sign({ id: foundUserProperties.id }, JWTSECRET, { algorithm: 'HS256' })
     }
-    return foundItem
+    throw new AuthenticationError('Wrong email/password combination')
   }
 
-  addPost (newPost, userId) {
-    // TODO: convert to cypher code
-    const foundUser = this.getUsers().find(user => user.id === userId)
-    if (foundUser) {
-      const item = new Post(uuidv4(), newPost.title, foundUser)
-      foundUser.posts.push(item)
-      this.posts.push(item)
-      return item
-    }
-    return null
-  }
-
-  login (email, password) {
-    // TODO: convert to cypher code
-    const foundUser = this.getUsers().find(user => user.email === email)
-
-    if (foundUser) {
-      if (compareSync(password, foundUser.password)) {
-        return sign({ id: foundUser.id }, JWTSECRET, { algorithm: 'HS256' })
-      }
-      throw new AuthenticationError('Wrong email/password combination')
-    }
-  }
-
-  addUser (name, email, password) {
-    // TODO: convert to cypher code
+  async addUser (name, email, password, driver) {
     if (password.length < 8) {
       throw new UserInputError('Password must have at least 8 characters')
     }
-    const foundUser = this.getUsers().find(user => user.email === email)
-    if (foundUser) {
+    const session = driver.session()
+    let existingEmails = []
+    await this.getUsers(session).then(result => {
+      existingEmails = result.records.map(record => record._fields[0])
+    })
+    if (existingEmails.includes(email)) {
       throw new ForbiddenError('Email already taken by another user')
     }
     const user = new User(uuidv4(), name, email, hashSync(password, 10))
-    this.users.push(user)
+    const txc = session.beginTransaction()
+    await txc.run('CREATE (n:User { id:$userId, name: "userName", email: $userEmail, password: $userPassword })', {
+      userId: user.id,
+      userName: user.name,
+      userEmail: user.email,
+      userPassword: user.password
+
+    })
+    await txc.commit()
     return sign({ id: user.id }, JWTSECRET, { algorithm: 'HS256' })
   }
 }
