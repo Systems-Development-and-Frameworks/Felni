@@ -32,7 +32,7 @@ export async function createDriverAndStuffDatabase (deleteDatabase: boolean) {
         postId: posts[i].id,
         postTitle: posts[i].title
       })
-      await txc.run('CREATE (n:User { id:$userId, name: "userName", email: $userEmail, password: $userPassword })', {
+      await txc.run('CREATE (n:User { id:$userId, name: $userName, email: $userEmail, password: $userPassword })', {
         userId: users[i].id,
         userName: users[i].name,
         userEmail: users[i].email,

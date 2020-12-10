@@ -23,6 +23,15 @@ export class PostsDataSource extends DataSource {
     await txc.commit()
     return result
   }
+
+  async getUserById (session, id) {
+    const txc = session.beginTransaction()
+    const result = await txc.run('MATCH (n:User) WHERE n.id = $id RETURN n', {
+      id: id
+    })
+    await txc.commit()
+    return result
+  }
   // // TODO: can not be deleted since it is used in isAuthenticated
   // existsUser (id) {
   //   // TODO: convert to cypher code
@@ -42,17 +51,33 @@ export class PostsDataSource extends DataSource {
   //   return foundItem
   // }
 
-  // addPost (newPost, userId) {
-  //   // TODO: convert to cypher code
-  //   const foundUser = this.getUsers().find(user => user.id === userId)
-  //   if (foundUser) {
-  //     const item = new Post(uuidv4(), newPost.title, foundUser)
-  //     foundUser.posts.push(item)
-  //     this.posts.push(item)
-  //     return item
-  //   }
-  //   return null
-  // }
+  async addPost (newPost, userId, driver) {
+    const session = driver.session()
+    let foundUserProperties
+    await this.getUserById(session, userId).then(result => {
+      if (result.records.length === 0) throw new UserInputError('No user found with this id')
+      foundUserProperties = result.records[0]._fields[0].properties
+    })
+    if (foundUserProperties) {
+      const item = new Post(uuidv4(), newPost.title)
+      const txc = session.beginTransaction()
+      let createResult
+      await txc.run(' CREATE (n:Post { id: $postId, title: $postTitle, votes: 0 }) RETURN n', {
+        postId: item.id,
+        postTitle: item.title
+      }).then(result => {
+        createResult = result.records[0]._fields[0].properties
+      })
+      await txc.run('MATCH (p:Post), (u:User) WHERE p.id = $postId AND u.id = $userId CREATE (u)-[r:POSTED]->(p)', {
+        postId: createResult.id,
+        userId: userId
+
+      })
+      txc.commit()
+      return createResult.id
+    }
+    return null
+  }
 
   async login (email, password, driver) {
     const session = driver.session()
@@ -81,7 +106,7 @@ export class PostsDataSource extends DataSource {
     }
     const user = new User(uuidv4(), name, email, hashSync(password, 10))
     const txc = session.beginTransaction()
-    await txc.run('CREATE (n:User { id:$userId, name: "userName", email: $userEmail, password: $userPassword })', {
+    await txc.run('CREATE (n:User { id:$userId, name: $userName, email: $userEmail, password: $userPassword })', {
       userId: user.id,
       userName: user.name,
       userEmail: user.email,

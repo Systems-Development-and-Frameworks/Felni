@@ -50,11 +50,27 @@ export default ({ subschema }) => ({
     }
   },
   Mutation: {
-    signup: async (parent, { name, email, password }, context, info) => {
-      return context.dataSources.posts.addUser(name, email, password, context.driver)
+    write: async (parent, { post }, context, info) => {
+      const createdPostId = await context.dataSources.posts.addPost(post, context.decodedJwt.id, context.driver)
+      console.log(createdPostId)
+      if (createdPostId) {
+        const resolvedPost = await delegateToSchema({
+          schema: subschema,
+          operation: 'query',
+          fieldName: 'Post',
+          context,
+          info
+        })
+        const newPost = await resolvedPost.find(post => post.id === createdPostId)
+        return newPost
+      }
+      return null
     },
     login: async (parent, { email, password }, context, info) => {
       return context.dataSources.posts.login(email, password, context.driver)
+    },
+    signup: async (parent, { name, email, password }, context, info) => {
+      return context.dataSources.posts.addUser(name, email, password, context.driver)
     }
   }
 })

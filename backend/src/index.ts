@@ -4,13 +4,9 @@ import { typeDefs } from './typeDefs'
 import { permissions } from './permissions'
 import { createContext } from './context'
 import { ApolloServer } from 'apollo-server'
-import { v4 as uuidv4 } from 'uuid'
 import { applyMiddleware } from 'graphql-middleware'
-import { defaultMergedResolver, makeExecutableSchema, stitchSchemas } from 'graphql-tools'
-import { hashSync } from 'bcrypt'
-import { Post } from './post'
-import { User } from './user'
-import { augmentSchema, makeAugmentedSchema } from 'neo4j-graphql-js'
+import { stitchSchemas } from 'graphql-tools'
+import { makeAugmentedSchema } from 'neo4j-graphql-js'
 import { createDriverAndStuffDatabase } from './driver'
 
 // apparently with "makeExecutableSchema" we cannot use @relation(...) on our Typdefs
@@ -32,12 +28,10 @@ const stichedSchema = stitchSchemas({
 const start = async () => {
   const driver = await createDriverAndStuffDatabase(false)
   const server = new ApolloServer({
-    // i hope this works, if not we have to use no auto generated queries or use "isAuthenticated" directive which
-    // only works on Types and Fields not on Queries
-    // or maybe use hasScope and graphql-auth-directives by attaching custom authorization schema directives
-    // schema: applyMiddleware(schema, permissions),
     schema: applyMiddleware(stichedSchema, permissions),
-    context: { ...createContext, driver },
+    context: ({ req }) => {
+      return createContext(req, driver)
+    },
     dataSources: () => ({
       posts: new PostsDataSource()
     })
@@ -47,6 +41,5 @@ const start = async () => {
   server.listen().then(({ url }) => {
     console.log(`🚀  Server ready at ${url}`)
   })
-  // do stuff
 }
 start()

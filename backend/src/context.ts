@@ -1,7 +1,7 @@
 import { JWTSECRET } from './importSecret'
 import { verify } from 'jsonwebtoken'
 
-export function createContext ({ req }) {
+export function createContext (req, driver) {
   let token = req?.headers?.authorization || ''
   token = token.replace('Bearer ', '')
   try {
@@ -9,8 +9,8 @@ export function createContext ({ req }) {
       token,
       JWTSECRET
     )
-    return { decodedJwt, req } // i think req is required for the middleware permissions to work
+    return { decodedJwt, driver } // i think req is required for the middleware permissions to work
   } catch (e) {
-    return {}
+    return { driver }
   }
 }
