@@ -29,4 +29,4 @@ export const permissions = shield({
   },
   Post: allow,
   User: allow
-})
+}, { allowExternalErrors: true })

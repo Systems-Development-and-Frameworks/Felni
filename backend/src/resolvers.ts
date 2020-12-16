@@ -1,29 +1,3 @@
-// export const resolvers = {
-//   // for Post and User we can -maybe- use default resolvers
-//   Query: {
-//     posts: (parent, { newsId }, context, info) => {
-//       return context.dataSources.posts.getPosts()
-//     },
-//     users: (parent, { userId }, context, info) => {
-//       return context.dataSources.posts.getUsers()
-//     }
-//   },
-//   Mutation: {
-//     write: (parent, { post }, context, info) => {
-//       return context.dataSources.posts.addPost(post, context.decodedJwt.id)
-//     },
-//     upvote: (parent, { id, voter }, context, info) => {
-//       return context.dataSources.posts.upvote(id, context.decodedJwt.id)
-//     },
-//     login: (parent, { email, password }, context, info) => {
-//       return context.dataSources.posts.login(email, password)
-//     },
-//     signup: (parent, { name, email, password }, context, info) => {
-//       return context.dataSources.posts.addUser(name, email, password)
-//     }
-//   }
-// }
-
 import { delegateToSchema } from 'graphql-tools'
 
 export default ({ subschema }) => ({
@@ -52,7 +26,6 @@ export default ({ subschema }) => ({
   Mutation: {
     write: async (parent, { post }, context, info) => {
       const createdPostId = await context.dataSources.posts.addPost(post, context.decodedJwt.id, context.driver)
-      console.log(createdPostId)
       if (createdPostId) {
         const resolvedPost = await delegateToSchema({
           schema: subschema,
@@ -65,6 +38,9 @@ export default ({ subschema }) => ({
         return newPost
       }
       return null
+    },
+    upvote: async (parent, { id }, context, info) => {
+      return context.dataSources.posts.upvote(id, context.decodedJwt.id, context.driver)
     },
     login: async (parent, { email, password }, context, info) => {
       return context.dataSources.posts.login(email, password, context.driver)

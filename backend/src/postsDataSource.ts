@@ -32,24 +32,38 @@ export class PostsDataSource extends DataSource {
     await txc.commit()
     return result
   }
-  // // TODO: can not be deleted since it is used in isAuthenticated
-  // existsUser (id) {
-  //   // TODO: convert to cypher code
-  //   return !!this.users.find(user => user.id === id)
-  // }
 
-  // upvote (postId, userId) {
-  //   // TODO: convert to cypher code
-  //   const foundItem = this.getPosts().find(item => item.id === postId)
-  //   const foundUser = this.getUsers().find(user => user.id === userId)
-  //   if (foundItem && foundUser) {
-  //     if (!foundItem.voters.includes(foundUser.id)) {
-  //       foundItem.votes += 1
-  //       foundItem.voters.push(foundUser.id)
-  //     }
-  //   }
-  //   return foundItem
-  // }
+  async upvote (postId, userId, driver) {
+    const session = driver.session()
+    const txc = session.beginTransaction()
+
+    let foundItems;
+    await txc.run('MATCH (u:User)-[rel:VOTED]->(p:Post) WHERE p.id = $postId AND u.id = $userId RETURN p', {
+      postId: postId,
+      userId: userId
+    }).then(result => {
+      foundItems = result.records;
+    })
+
+    if (!foundItems.length) {
+      let updatedItem;
+      await txc.run('MATCH (p:Post) WHERE p.id = $postId SET p.votes = p.votes + 1 RETURN p', {
+        postId: postId
+      }).then(result => {
+        updatedItem = result.records[0]._fields[0].properties
+      })
+  
+      await txc.run('MATCH (p:Post), (u:User) WHERE p.id = $postId AND u.id = $userId CREATE (u)-[r:VOTED]->(p)', {
+        postId: postId,
+        userId: userId
+      })
+
+      await txc.commit();
+      return updatedItem;
+    } else {
+      return foundItems[0]._fields[0].properties;
+    }
+  }
 
   async addPost (newPost, userId, driver) {
     const session = driver.session()
@@ -73,7 +87,7 @@ export class PostsDataSource extends DataSource {
         userId: userId
 
       })
-      txc.commit()
+      await txc.commit()
       return createResult.id
     }
     return null
