@@ -1,7 +1,7 @@
-import { resolvers } from './resolvers'
+import Resolvers from './resolvers'
 import { typeDefs } from './typeDefs'
 import { permissions } from './permissions'
-import { PostsDataSource } from './postsDataSource'
+import { MemoryDataSource } from './memoryDataSource'
 import { ApolloServer } from 'apollo-server'
 import { createTestClient } from 'apollo-server-testing'
 import { applyMiddleware } from 'graphql-middleware'
@@ -11,9 +11,11 @@ import { hashSync } from 'bcrypt'
 import { verify } from 'jsonwebtoken'
 import { Post } from './post'
 import { User } from './user'
+import { stitchSchemas } from 'graphql-tools'
+import { makeAugmentedSchema } from 'neo4j-graphql-js'
 
 let posts
-const testContext = (testToken?) => {
+const testContext = (testToken, driver) => {
   let token = testToken || ''
   token = token.replace('Bearer ', '')
   try {
@@ -21,16 +23,25 @@ const testContext = (testToken?) => {
       token,
       JWTSECRET
     )
-    return { decodedJwt }
+    return { decodedJwt, driver }
   } catch (e) {
-    return {}
+    return { driver }
   }
 }
+const schema = makeAugmentedSchema({ typeDefs })
+const resolvers = Resolvers({ subschema: null })
+const stichedSchema = stitchSchemas({
+  subschemas: [schema],
+  typeDefs,
+  resolvers
+})
+
 const setupServerAndReturnTestClient = (postDataSource, testToken?) => {
-  const schema = makeExecutableSchema({ typeDefs, resolvers })
+  //const resolvers = Resolvers({ subschema: null })
+  //const schema = makeExecutableSchema({ typeDefs, resolvers })
   const server = new ApolloServer({
-    schema: applyMiddleware(schema, permissions),
-    context: testContext(testToken), // not sure if this is the correct way. but we didn`t find another solution to add the token as request (see https://github.com/apollographql/apollo-server/issues/2277)
+    schema: applyMiddleware(stichedSchema, permissions),
+    context: testContext(testToken, null), // not sure if this is the correct way. but we didn`t find another solution to add the token as request (see https://github.com/apollographql/apollo-server/issues/2277)
     dataSources: () => ({
       posts: postDataSource
     })
@@ -44,7 +55,7 @@ describe('Test apollo server queries', () => {
     const userData = [new User('userid1', 'user1', 'user1@example.org', hashSync('user1password', 10))]
     postData[0].author = userData[0]
     userData[0].posts.push(postData[0])
-    posts = new PostsDataSource(postData, userData)
+    posts = new MemoryDataSource(postData, userData)
   })
   it('get all posts returns 1 post', async () => {
     const { query } = setupServerAndReturnTestClient(posts)
@@ -85,6 +96,7 @@ describe('Test apollo server queries', () => {
     let client = setupServerAndReturnTestClient(posts)
     const LOGIN = 'mutation {  login (email: "user1@example.org", password: "user1password") }'
     const res = await client.mutate({ mutation: LOGIN })
+    console.log(res);
     client = setupServerAndReturnTestClient(posts, res.data.login)
     const UPVOTE = 'mutation { upvote(id: "post1") { votes }}'
     const resUpvote = await client.mutate({ mutation: UPVOTE })

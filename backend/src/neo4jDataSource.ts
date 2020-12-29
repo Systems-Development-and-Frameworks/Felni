@@ -7,7 +7,7 @@ import { AuthenticationError, UserInputError, ForbiddenError } from 'apollo-serv
 import { Post } from './post'
 import { User } from './user'
 
-export class PostsDataSource extends DataSource {
+export class Neo4JDataSource extends DataSource {
   async getUsers (session) {
     const txc = session.beginTransaction()
     const result = await txc.run('MATCH (n:User) RETURN n.email')

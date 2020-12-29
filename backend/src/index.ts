@@ -1,4 +1,4 @@
-import { PostsDataSource } from './postsDataSource'
+import { Neo4JDataSource } from './neo4jDataSource'
 import Resolvers from './resolvers'
 import { typeDefs } from './typeDefs'
 import { permissions } from './permissions'
@@ -33,7 +33,7 @@ const start = async () => {
       return createContext(req, driver)
     },
     dataSources: () => ({
-      posts: new PostsDataSource()
+      posts: new Neo4JDataSource()
     })
   })
 
