@@ -5,13 +5,13 @@ import { MemoryDataSource } from './memoryDataSource'
 import { ApolloServer } from 'apollo-server'
 import { createTestClient } from 'apollo-server-testing'
 import { applyMiddleware } from 'graphql-middleware'
-import { makeExecutableSchema } from 'graphql-tools'
+import { stitchSchemas } from 'graphql-tools'
 import { JWTSECRET } from './importSecret'
 import { hashSync } from 'bcrypt'
 import { verify } from 'jsonwebtoken'
 import { Post } from './post'
 import { User } from './user'
-import { stitchSchemas } from 'graphql-tools'
+
 import { makeAugmentedSchema } from 'neo4j-graphql-js'
 
 let posts
@@ -37,11 +37,9 @@ const stichedSchema = stitchSchemas({
 })
 
 const setupServerAndReturnTestClient = (postDataSource, testToken?) => {
-  //const resolvers = Resolvers({ subschema: null })
-  //const schema = makeExecutableSchema({ typeDefs, resolvers })
   const server = new ApolloServer({
     schema: applyMiddleware(stichedSchema, permissions),
-    context: testContext(testToken, null), // not sure if this is the correct way. but we didn`t find another solution to add the token as request (see https://github.com/apollographql/apollo-server/issues/2277)
+    context: testContext(testToken, null),
     dataSources: () => ({
       posts: postDataSource
     })
@@ -96,7 +94,6 @@ describe('Test apollo server queries', () => {
     let client = setupServerAndReturnTestClient(posts)
     const LOGIN = 'mutation {  login (email: "user1@example.org", password: "user1password") }'
     const res = await client.mutate({ mutation: LOGIN })
-    console.log(res);
     client = setupServerAndReturnTestClient(posts, res.data.login)
     const UPVOTE = 'mutation { upvote(id: "post1") { votes }}'
     const resUpvote = await client.mutate({ mutation: UPVOTE })
@@ -145,7 +142,7 @@ describe('Test apollo server queries', () => {
     const { mutate } = setupServerAndReturnTestClient(posts)
     const SIGNUP = 'mutation {  signup (name: "testuser", email: "testuser@example.org", password: "short") }'
     const res = await mutate({ mutation: SIGNUP })
-    expect(res.errors[0].message).toEqual('Not Authorised!')
+    expect(res.errors[0].message).toEqual('Password must have at least 8 characters')
     expect(res.data.signup).toBeNull()
   })
 
@@ -162,7 +159,7 @@ describe('Test apollo server queries', () => {
     const SIGNUP = 'mutation {  signup (name: "testuser", email: "testuser@example.org", password: "password") }'
     await mutate({ mutation: SIGNUP })
     const res = await mutate({ mutation: SIGNUP })
-    expect(res.errors[0].message).toEqual('Not Authorised!')
+    expect(res.errors[0].message).toEqual('Email already taken by another user')
     expect(res.data.signup).toBeNull()
   })
 
@@ -172,7 +169,7 @@ describe('Test apollo server queries', () => {
     await mutate({ mutation: SIGNUP })
     const LOGIN = 'mutation {  login (email: "testuser@example.org", password: "invalid") }'
     const res = await mutate({ mutation: LOGIN })
-    expect(res.errors[0].message).toEqual('Not Authorised!')
+    expect(res.errors[0].message).toEqual('Wrong email/password combination')
     expect(res.data.login).toBeNull()
   })
 

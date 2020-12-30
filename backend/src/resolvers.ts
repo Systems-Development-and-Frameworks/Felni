@@ -3,7 +3,7 @@ import { delegateToSchema } from 'graphql-tools'
 export default ({ subschema }) => ({
   Query: {
     posts: async (parent, args, context, info) => {
-      if(subschema) {
+      if (subschema) {
         const post = await delegateToSchema({
           schema: subschema,
           operation: 'query',
@@ -17,7 +17,7 @@ export default ({ subschema }) => ({
       }
     },
     users: async (parent, args, context, info) => {
-      if(subschema) {
+      if (subschema) {
         const user = await delegateToSchema({
           schema: subschema,
           operation: 'query',
@@ -34,7 +34,7 @@ export default ({ subschema }) => ({
   Mutation: {
     write: async (parent, { post }, context, info) => {
       const createdPostId = await context.dataSources.posts.addPost(post, context.decodedJwt.id, context.driver)
-      if(subschema) {
+      if (subschema) {
         if (createdPostId) {
           const resolvedPost = await delegateToSchema({
             schema: subschema,
@@ -48,7 +48,7 @@ export default ({ subschema }) => ({
         }
         return null
       } else {
-        return createdPostId;
+        return createdPostId
       }
     },
     upvote: async (parent, { id }, context, info) => {

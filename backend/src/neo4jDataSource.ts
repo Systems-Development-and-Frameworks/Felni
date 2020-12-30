@@ -37,31 +37,31 @@ export class Neo4JDataSource extends DataSource {
     const session = driver.session()
     const txc = session.beginTransaction()
 
-    let foundItems;
+    let foundItems
     await txc.run('MATCH (u:User)-[rel:VOTED]->(p:Post) WHERE p.id = $postId AND u.id = $userId RETURN p', {
       postId: postId,
       userId: userId
     }).then(result => {
-      foundItems = result.records;
+      foundItems = result.records
     })
 
     if (!foundItems.length) {
-      let updatedItem;
+      let updatedItem
       await txc.run('MATCH (p:Post) WHERE p.id = $postId SET p.votes = p.votes + 1 RETURN p', {
         postId: postId
       }).then(result => {
         updatedItem = result.records[0]._fields[0].properties
       })
-  
+
       await txc.run('MATCH (p:Post), (u:User) WHERE p.id = $postId AND u.id = $userId CREATE (u)-[r:VOTED]->(p)', {
         postId: postId,
         userId: userId
       })
 
-      await txc.commit();
-      return updatedItem;
+      await txc.commit()
+      return updatedItem
     } else {
-      return foundItems[0]._fields[0].properties;
+      return foundItems[0]._fields[0].properties
     }
   }
 

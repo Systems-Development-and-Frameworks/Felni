@@ -2,7 +2,7 @@ import { rule, shield, deny, allow } from 'graphql-shield'
 
 const isAuthenticated = rule({ cache: 'contextual' })(
   async (parent, args, context, info) => {
-    if(context.driver) {
+    if (context.driver) {
       const session = context.driver.session()
       const txc = session.beginTransaction()
       let userExist = false
@@ -15,7 +15,6 @@ const isAuthenticated = rule({ cache: 'contextual' })(
     } else {
       return await context.dataSources.posts.existsUser(context.decodedJwt.id)
     }
-    
   }
 )
 
