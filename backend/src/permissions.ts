@@ -19,7 +19,7 @@ const isAuthenticated = rule({ cache: 'contextual' })(
 )
 
 export const permissions = shield({
-  Query: {//
+  Query: {
     posts: allow,
     users: allow,
     '*': deny
