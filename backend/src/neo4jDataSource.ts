@@ -37,40 +37,36 @@ export class Neo4JDataSource extends DataSource {
     const session = driver.session()
     const txc = session.beginTransaction()
 
-    let foundItems
-    await txc.run('MATCH (u:User)-[rel:VOTED]->(p:Post) WHERE p.id = $postId AND u.id = $userId RETURN p', {
+    let post;
+    await txc.run(
+      'MATCH (p:Post { id: $postId }), (u:User { id: $userId }) ' + 
+      'WHERE NOT (u:User)-[:VOTED]->(p:Post) ' +
+      'SET p.votes = p.votes + 1.0 ' +
+      'CREATE (u)-[r:VOTED]->(p) ' +
+      'RETURN p', {
       postId: postId,
       userId: userId
     }).then(result => {
-      foundItems = result.records
+      if(result.records.length) {
+        post = result.records[0]._fields[0].properties
+      }
+    }).then(result => {
+      if(!post) {
+        txc.run('MATCH (p:Post), (u:User) WHERE p.id = $postId RETURN p', {
+          postId: postId,
+          userId: userId
+        }).then(result => {
+          if(result.records.length) {
+            post = result.records[0]._fields[0].properties
+          } else {
+            throw new UserInputError('No user or post found with the corresponding id')
+          }
+        })
+      }
     })
-    if (!foundItems.length) {
-      let votes
-      await txc.run('MATCH (p:Post) WHERE p.id = $postId RETURN p', {
-        postId: postId
-      }).then(result => {
-        if (!result.records.length) throw new UserInputError('No post found with this id')
-        votes = result.records[0]._fields[0].properties.votes
-      })
-      let updatedItem
-      // we could not set the votes using p.votes + 1 because we had an error that way. that is why we get the votes of the post first and pass them in args
-      await txc.run('MATCH (p:Post) WHERE p.id = $postId SET p.votes = $votes RETURN p', {
-        postId: postId,
-        votes: votes + 1
-      }).then(result => {
-        updatedItem = result.records[0]._fields[0].properties
-      })
 
-      await txc.run('MATCH (p:Post), (u:User) WHERE p.id = $postId AND u.id = $userId CREATE (u)-[r:VOTED]->(p)', {
-        postId: postId,
-        userId: userId
-      })
-
-      await txc.commit()
-      return updatedItem
-    } else {
-      return foundItems[0]._fields[0].properties
-    }
+    await txc.commit()
+    return post;
   }
 
   async addPost (newPost, userId, driver) {

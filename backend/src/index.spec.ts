@@ -149,7 +149,7 @@ describe('Test apollo server queries', () => {
     })
   })
 
-  describe('Tests with invalid token', () => {
+  describe('Tests with valid token', () => {
     beforeEach(async () => {
       await setupServerAndReturnTestClient('valid')
     })
