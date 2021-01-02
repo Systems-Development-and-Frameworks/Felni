@@ -44,11 +44,19 @@ export class Neo4JDataSource extends DataSource {
     }).then(result => {
       foundItems = result.records
     })
-
     if (!foundItems.length) {
-      let updatedItem
-      await txc.run('MATCH (p:Post) WHERE p.id = $postId SET p.votes = p.votes + 1 RETURN p', {
+      let votes
+      await txc.run('MATCH (p:Post) WHERE p.id = $postId RETURN p', {
         postId: postId
+      }).then(result => {
+        if (!result.records.length) throw new UserInputError('No post found with this id')
+        votes = result.records[0]._fields[0].properties.votes
+      })
+      let updatedItem
+      // we could not set the votes using p.votes + 1 because we had an error that way. that is why we get the votes of the post first and pass them in args
+      await txc.run('MATCH (p:Post) WHERE p.id = $postId SET p.votes = $votes RETURN p', {
+        postId: postId,
+        votes: votes + 1
       }).then(result => {
         updatedItem = result.records[0]._fields[0].properties
       })
@@ -75,20 +83,23 @@ export class Neo4JDataSource extends DataSource {
     if (foundUserProperties) {
       const item = new Post(uuidv4(), newPost.title)
       const txc = session.beginTransaction()
-      let createResult
-      await txc.run(' CREATE (n:Post { id: $postId, title: $postTitle, votes: 0 }) RETURN n', {
+      let post
+      await txc.run('CREATE (n:Post { id: $postId, title: $postTitle, votes: $votes }) RETURN n', {
         postId: item.id,
-        postTitle: item.title
+        postTitle: item.title,
+        votes: 0
       }).then(result => {
-        createResult = result.records[0]._fields[0].properties
+        post = result.records[0]._fields[0].properties
       })
-      await txc.run('MATCH (p:Post), (u:User) WHERE p.id = $postId AND u.id = $userId CREATE (u)-[r:POSTED]->(p)', {
-        postId: createResult.id,
+      await txc.run('MATCH (p:Post), (u:User) WHERE p.id = $postId AND u.id = $userId CREATE (u)-[r:POSTED]->(p) RETURN p', {
+        postId: post.id,
         userId: userId
 
+      }).then(result => {
+        post = result.records[0]._fields[0].properties
       })
       await txc.commit()
-      return createResult.id
+      return post
     }
     return null
   }
