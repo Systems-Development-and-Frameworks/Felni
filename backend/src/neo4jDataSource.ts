@@ -37,26 +37,26 @@ export class Neo4JDataSource extends DataSource {
     const session = driver.session()
     const txc = session.beginTransaction()
 
-    let post;
+    let post
     await txc.run(
-      'MATCH (p:Post { id: $postId }), (u:User { id: $userId }) ' + 
+      'MATCH (p:Post { id: $postId }), (u:User { id: $userId }) ' +
       'WHERE NOT (u:User)-[:VOTED]->(p:Post) ' +
       'SET p.votes = p.votes + 1.0 ' +
       'CREATE (u)-[r:VOTED]->(p) ' +
       'RETURN p', {
-      postId: postId,
-      userId: userId
-    }).then(result => {
-      if(result.records.length) {
+        postId: postId,
+        userId: userId
+      }).then(result => {
+      if (result.records.length) {
         post = result.records[0]._fields[0].properties
       }
     }).then(result => {
-      if(!post) {
+      if (!post) {
         txc.run('MATCH (p:Post), (u:User) WHERE p.id = $postId RETURN p', {
           postId: postId,
           userId: userId
         }).then(result => {
-          if(result.records.length) {
+          if (result.records.length) {
             post = result.records[0]._fields[0].properties
           } else {
             throw new UserInputError('No user or post found with the corresponding id')
@@ -66,7 +66,7 @@ export class Neo4JDataSource extends DataSource {
     })
 
     await txc.commit()
-    return post;
+    return post
   }
 
   async addPost (newPost, userId, driver) {
