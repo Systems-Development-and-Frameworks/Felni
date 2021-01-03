@@ -43,7 +43,22 @@ export default ({ subschema }) => ({
       return null
     },
     upvote: async (parent, { id }, context, info) => {
-      return context.dataSources.posts.upvote(id, context.decodedJwt.id, context.driver)
+      const returnedPost = await context.dataSources.posts.upvote(id, context.decodedJwt.id, context.driver)
+      if (returnedPost) {
+        const resolvedPost = await delegateToSchema({
+          schema: subschema,
+          operation: 'query',
+          fieldName: 'Post',
+          context,
+          args: { id: returnedPost.id },
+          info
+        })
+        if (resolvedPost.length) {
+          return resolvedPost[0]
+        }
+        return null
+      }
+      return null
     },
     login: async (parent, { email, password }, context, info) => {
       return context.dataSources.posts.login(email, password, context.driver)
