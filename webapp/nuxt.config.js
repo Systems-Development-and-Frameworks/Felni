@@ -37,5 +37,19 @@ export default {
 
   // Build Configuration (https://go.nuxtjs.dev/config-build)
   build: {
+  },
+
+  // Storybook
+  storybook: {
+    stories: [
+      './components/**/*.stories.mdx',
+      './components/**/*.stories.@(js|jsx|ts|tsx)'
+    ],
+    addons: [
+      '@storybook/addon-links',
+      '@storybook/addon-essentials',
+      '@storybook/addon-a11y'
+    ],
+    port: 6006
   }
 }

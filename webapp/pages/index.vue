@@ -11,6 +11,3 @@ export default {
     NewsList
   }
 }
-</script>
-<style src="bootstrap/dist/css/bootstrap.css">
-</style>

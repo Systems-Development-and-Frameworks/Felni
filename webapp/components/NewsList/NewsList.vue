@@ -1,26 +1,24 @@
 <template>
-  <div class="container">
-    <div class="row justify-content-center">
-      <div class="col text-center">
-        <div class="mt-4">
-          <h1>News List</h1>
-          <button type="button" class="btn btn-outline-secondary ml-2 reverse-order-button" @click="reverseordering()">
-            Reverse order
-          </button>
-          <div v-for="item in sortItems" :key="item.id">
-            <NewsItem
-              :item="item"
-              @updateitem="updateitem($event)"
-              @removeitem="removeitem($event)"
-            />
-          </div>
-          <div v-if="!sortItems.length" class="mb-4 mt-4 empty-list">
-            The list is empty &#128546;
-          </div>
-          <NewsForm
-            @additemandpreventdefaultevent="additem($event)"
+  <div class="row justify-content-center">
+    <div class="col text-center">
+      <div class="mt-4">
+        <h1>News List</h1>
+        <button type="button" class="btn btn-outline-secondary ml-2 reverse-order-button" @click="reverseordering()">
+          Reverse order
+        </button>
+        <div v-for="item in sortItems" :key="item.id">
+          <NewsItem
+            :item="item"
+            @updateitem="updateitem($event)"
+            @removeitem="removeitem($event)"
           />
         </div>
+        <div v-if="!sortItems.length" class="mb-4 mt-4 empty-list">
+          The list is empty &#128546;
+        </div>
+        <NewsForm
+          @additemandpreventdefaultevent="additem($event)"
+        />
       </div>
     </div>
   </div>
