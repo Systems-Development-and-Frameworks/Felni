@@ -7,8 +7,8 @@
     "build": "nuxt-ts build",
     "start": "nuxt-ts start",
     "generate": "nuxt-ts generate",
-    "lint:js": "eslint --ext .js,.vue --ignore-path .gitignore .",
-    "lint": "npm run lint:js",
+    "lint:js": "eslint --fix --ext .js,.vue --ignore-path .gitignore .",
+    "lint": "npm run lint:js --fix",
     "test": "jest"
   },
   "lint-staged": {
@@ -22,6 +22,8 @@
   "dependencies": {
     "@nuxt/typescript-runtime": "^2.0.0",
     "@nuxtjs/pwa": "^3.0.2",
+    "bootstrap": "^4.5.3",
+    "bootstrap-vue": "^2.18.1",
     "core-js": "^3.6.5",
     "nuxt": "^2.14.6"
   },
