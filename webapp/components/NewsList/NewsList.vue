@@ -17,6 +17,7 @@
           The list is empty &#128546;
         </div>
         <NewsForm
+          v-show="!loggedOut"
           @additemandpreventdefaultevent="additem($event)"
         />
       </div>
@@ -57,6 +58,9 @@ export default {
       } else {
         return [...this.items].sort((item1, item2) => item2.votes - item1.votes)
       }
+    },
+    loggedOut () {
+      return this.$store.state.auth.token === ''
     }
   },
   methods: {

@@ -4,6 +4,7 @@
       <span class="news-title">{{ item.title }}</span>&nbsp;<span class="news-votes">({{ item.votes }})</span>
     </h2>
     <button
+      v-show="!loggedOut"
       type="button"
       class="btn btn-primary mr-2 upvote-button"
       @click="addcounter"
@@ -11,6 +12,7 @@
       Upvote
     </button>
     <button
+      v-show="!loggedOut"
       type="button"
       class="btn btn-primary mr-2 downvote-button"
       @click="reducecounter"
@@ -18,6 +20,7 @@
       Downvote
     </button>
     <button
+      v-show="!loggedOut"
       type="button"
       class="btn btn-primary mr-2 remove-button"
       @click="$emit('removeitem', item.id)"
@@ -36,6 +39,11 @@ export default {
   data () {
     return {
       mutableItem: this.item
+    }
+  },
+  computed: {
+    loggedOut () {
+      return this.$store.state.auth.token === ''
     }
   },
   methods: {
