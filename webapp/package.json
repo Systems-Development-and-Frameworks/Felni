@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@nuxt/typescript-runtime": "^2.0.0",
+    "@nuxtjs/apollo": "^4.0.1-rc.5",
     "@nuxtjs/pwa": "^3.0.2",
     "bootstrap": "^4.5.3",
     "bootstrap-vue": "^2.18.1",

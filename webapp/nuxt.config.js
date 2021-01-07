@@ -32,7 +32,8 @@ export default {
   // Modules (https://go.nuxtjs.dev/config-modules)
   modules: [
     // https://go.nuxtjs.dev/pwa
-    '@nuxtjs/pwa'
+    '@nuxtjs/pwa',
+    '@nuxtjs/apollo'
   ],
 
   // Build Configuration (https://go.nuxtjs.dev/config-build)
@@ -51,5 +52,13 @@ export default {
       '@storybook/addon-a11y'
     ],
     port: 6006
+  },
+
+  apollo: {
+    clientConfigs: {
+      default: {
+        httpEndpoint: 'http://localhost:4000'
+      }
+    }
   }
 }
