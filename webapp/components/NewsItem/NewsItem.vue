@@ -20,7 +20,7 @@
       Downvote
     </button> -->
     <button
-      v-show="!loggedOut"
+      v-show="!loggedOut && isDeleteAllowed()"
       type="button"
       class="btn btn-primary mr-2 remove-button"
       @click="$emit('removeitem', item.id)"
@@ -31,6 +31,9 @@
 </template>
 
 <script>
+// eslint-disable-next-line camelcase
+import jwt_decode from 'jwt-decode'
+
 export default {
   name: 'NewsItem',
   props: {
@@ -50,6 +53,12 @@ export default {
     addcounter () {
       // this.mutableItem.votes += 1
       this.$emit('updateitem', this.mutableItem)
+    },
+    isDeleteAllowed () {
+      let token = this.$store.state.auth.token
+      token = token.replace('Bearer ', '')
+      const decoded = jwt_decode(token)
+      return decoded.id === this.mutableItem.author.id
     }
     // reducecounter () {
     //   this.mutableItem.votes -= 1

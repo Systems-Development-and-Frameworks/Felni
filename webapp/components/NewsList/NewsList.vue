@@ -120,10 +120,38 @@ export default {
       }
       // this.items = this.items.map(item => eventitem.id === item.id ? eventitem : item)
     },
-    removeitem (id) {
-      this.items = this.items.filter((item) => {
-        return item.id !== id
-      })
+    async removeitem (id) {
+      const deletePost = gql`
+        mutation deletePost($id: ID!) {
+          delete(id: $id ) {
+            id
+          }
+        }
+      `
+      try {
+        await this.$apollo
+          .mutate({
+            mutation: deletePost,
+            variables: {
+              id
+            },
+            context: {
+              headers: {
+                Authorization: 'Bearer ' + this.$store.state.auth.token
+              }
+            }
+          })
+          .then(() => {
+            const index = this.items.findIndex(item => item.id === id)
+            this.items.splice(index, 1)
+            this.items = [...this.items]
+          })
+      } catch (e) {
+        alert(e)
+      }
+      // this.items = this.items.filter((item) => {
+      //   return item.id !== id
+      // })
     },
     async additem (title) {
       // mutation for add post

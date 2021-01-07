@@ -69,6 +69,42 @@ export class Neo4JDataSource extends DataSource {
     return post
   }
 
+  async delete (postId, userId, driver) {
+    const session = driver.session()
+    const txc = session.beginTransaction()
+
+    let post
+    let author
+    await txc.run(
+      'MATCH (p:Post { id: $postId })-[r]-(b)' +
+      'RETURN p,r,b', {
+        postId: postId
+      }).then(result => {
+      if (result.records.length) {
+        post = result.records[0]._fields[0].properties
+        author = result.records[0]._fields[2].properties
+      }
+    }).then(result => {
+      if (userId !== author.id) {
+        throw new UserInputError('Only own posts can be deleted')
+      }
+      if (post && author && postId === post.id) {
+        txc.run('MATCH (p:Post { id: $postId }) DETACH DELETE p RETURN p', {
+          postId: postId
+        }).then(result => {
+          if (!result.records.length) {
+            throw new UserInputError('Could not delete post with id')
+          }
+        })
+      } else {
+        return null
+      }
+    })
+
+    await txc.commit()
+    return post
+  }
+
   async addPost (newPost, userId, driver) {
     const session = driver.session()
     let foundUserProperties

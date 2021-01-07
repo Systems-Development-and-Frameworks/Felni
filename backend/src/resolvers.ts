@@ -60,6 +60,9 @@ export default ({ subschema }) => ({
       }
       return null
     },
+    delete: async (parent, { id }, context, info) => {
+      return context.dataSources.posts.delete(id, context.decodedJwt.id, context.driver)
+    },
     login: async (parent, { email, password }, context, info) => {
       return context.dataSources.posts.login(email, password, context.driver)
     },

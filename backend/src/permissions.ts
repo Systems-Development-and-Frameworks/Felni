@@ -25,6 +25,7 @@ export const permissions = shield({
     upvote: isAuthenticated,
     login: allow,
     signup: allow,
+    delete: isAuthenticated,
     '*': deny
   },
   Post: allow,

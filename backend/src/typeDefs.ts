@@ -28,7 +28,7 @@ type Mutation {
   # 🚀 OPTIONAL
   # downvote(id: ID!): Post
   # 🚀 OPTIONAL
-  # delete(id: ID!): Post
+  delete(id: ID!): Post
 
   """
   returns a signed JWT or null
