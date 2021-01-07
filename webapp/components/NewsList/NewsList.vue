@@ -3,7 +3,11 @@
     <div class="col text-center">
       <div class="mt-4">
         <h1>News List</h1>
-        <button type="button" class="btn btn-outline-secondary ml-2 reverse-order-button" @click="reverseordering()">
+        <button
+          type="button"
+          class="btn btn-outline-secondary ml-2 reverse-order-button"
+          @click="reverseordering()"
+        >
           Reverse order
         </button>
         <div v-for="item in sortItems" :key="item.id">
@@ -26,15 +30,9 @@
 </template>
 
 <script>
+import gql from 'graphql-tag'
 import NewsItem from '../NewsItem/NewsItem'
 import NewsForm from '../NewsForm/NewsForm'
-
-let idCounter = 0
-
-function createListItemId () {
-  idCounter = idCounter + 1
-  return idCounter
-}
 
 export default {
   name: 'NewsList',
@@ -42,12 +40,34 @@ export default {
     NewsItem,
     NewsForm
   },
+  async fetch () {
+    const query = gql`
+           query posts {
+             posts {
+              id
+              title
+              votes
+              author {
+                id
+              }
+             }
+           }
+         `
+    try {
+      await this.$apollo
+        .query({
+          query
+        })
+        .then((data) => {
+          this.items = [...data.data.posts]
+        })
+    } catch (e) {
+      alert(e)
+    }
+  },
   data: () => {
     return {
-      items: [
-        { id: createListItemId(), title: 'Item 1', votes: 0 },
-        { id: createListItemId(), title: 'Item 2', votes: 0 }
-      ],
+      items: [],
       orderAscending: false
     }
   },
@@ -64,16 +84,80 @@ export default {
     }
   },
   methods: {
-    updateitem (eventitem) {
-      this.items = this.items.map(item => eventitem.id === item.id ? eventitem : item)
+    async updateitem (eventitem) {
+      const upvotePost = gql`
+        mutation upvotePost($id: ID!) {
+          upvote(id: $id ) {
+            id
+            title
+            votes
+            author {
+              id
+            }
+          }
+        }
+      `
+      try {
+        await this.$apollo
+          .mutate({
+            mutation: upvotePost,
+            variables: {
+              id: eventitem.id
+            },
+            context: {
+              headers: {
+                Authorization: 'Bearer ' + this.$store.state.auth.token
+              }
+            }
+          })
+          .then(({ data }) => {
+            const index = this.items.findIndex(item => item.id === eventitem.id)
+            this.items[index] = data.upvote
+            this.items = [...this.items]
+          })
+      } catch (e) {
+        alert(e)
+      }
+      // this.items = this.items.map(item => eventitem.id === item.id ? eventitem : item)
     },
     removeitem (id) {
       this.items = this.items.filter((item) => {
         return item.id !== id
       })
     },
-    additem (title) {
-      this.items.push({ id: createListItemId(), title, votes: 0 })
+    async additem (title) {
+      // mutation for add post
+      const addPost = gql`
+        mutation addPost($title: String!) {
+          write(post: { title: $title }) {
+            id
+            title
+            votes
+            author {
+              id
+            }
+          }
+        }
+      `
+      try {
+        await this.$apollo
+          .mutate({
+            mutation: addPost,
+            variables: {
+              title
+            },
+            context: {
+              headers: {
+                Authorization: 'Bearer ' + this.$store.state.auth.token
+              }
+            }
+          })
+          .then(({ data }) => {
+            this.items.push(data.write)
+          })
+      } catch (e) {
+        alert(e)
+      }
     },
     reverseordering () {
       this.orderAscending = !this.orderAscending

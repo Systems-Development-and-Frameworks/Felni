@@ -11,14 +11,14 @@
     >
       Upvote
     </button>
-    <button
+    <!-- <button
       v-show="!loggedOut"
       type="button"
       class="btn btn-primary mr-2 downvote-button"
       @click="reducecounter"
     >
       Downvote
-    </button>
+    </button> -->
     <button
       v-show="!loggedOut"
       type="button"
@@ -48,13 +48,13 @@ export default {
   },
   methods: {
     addcounter () {
-      this.mutableItem.votes += 1
-      this.$emit('updateitem', this.mutableItem)
-    },
-    reducecounter () {
-      this.mutableItem.votes -= 1
+      // this.mutableItem.votes += 1
       this.$emit('updateitem', this.mutableItem)
     }
+    // reducecounter () {
+    //   this.mutableItem.votes -= 1
+    //   this.$emit('updateitem', this.mutableItem)
+    // }
   }
 }
 </script>
