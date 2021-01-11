@@ -61,5 +61,11 @@ export default {
         httpEndpoint: 'http://localhost:4000'
       }
     }
+  },
+
+  pwa: {
+    manifest: {
+      theme_color: '#ffffff'
+    }
   }
 }
