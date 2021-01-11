@@ -3,7 +3,8 @@
 ## How to build webapp for production
 
 In order to use our webapp for production please run `npm install` first in case you haven't done it yet.
-To build and run our application please run `npm run build-start`
+To build and run our application please run `npm run build-start`.
+Also make sure to run our backend and the neo4j database (see backend README for more instructions).
 
 
 ## Build Setup
