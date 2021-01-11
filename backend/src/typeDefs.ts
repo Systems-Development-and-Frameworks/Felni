@@ -5,7 +5,7 @@ type Post {
   id: ID!
   title: String!
   votes: Int!
-  author: User!
+  author: User! @relation(name: "POSTED", direction:"IN")
 }
 
 type User {
@@ -14,7 +14,7 @@ type User {
   id: ID!
   name: String!
   email: String!
-  posts: [Post]
+  posts: [Post] @relation(name: "POSTED", direction:"OUT")
 }
 
 type Query {

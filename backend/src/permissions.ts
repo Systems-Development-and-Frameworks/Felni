@@ -2,7 +2,15 @@ import { rule, shield, deny, allow } from 'graphql-shield'
 
 const isAuthenticated = rule({ cache: 'contextual' })(
   async (parent, args, context, info) => {
-    return await context.dataSources.posts.existsUser(context.decodedJwt.id)
+    const session = context.driver.session()
+    const txc = session.beginTransaction()
+    let userExist = false
+    await txc.run('MATCH (n:User) WHERE n.id = $id RETURN n', {
+      id: context.decodedJwt.id
+    }).then(result => {
+      userExist = !(result.records.length === 0)
+    })
+    return userExist
   }
 )
 
@@ -21,4 +29,4 @@ export const permissions = shield({
   },
   Post: allow,
   User: allow
-})
+}, { allowExternalErrors: true })
