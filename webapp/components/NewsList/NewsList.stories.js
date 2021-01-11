@@ -5,7 +5,7 @@ export default {
   component: NewsList
 }
 
-const Template = (args, { argTypes }) => ({
+const Template = () => ({
   components: { NewsList },
   template: '<NewsList/>'
 })

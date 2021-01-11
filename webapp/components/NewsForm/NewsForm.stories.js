@@ -1,5 +1,5 @@
-import NewsForm from './NewsForm.vue'
 import { action } from '@storybook/addon-actions'
+import NewsForm from './NewsForm.vue'
 
 export default {
   title: 'NewsForm',
@@ -11,7 +11,7 @@ export const actionsData = {
   onAdditemandpreventdefaultevent: action('onAdditemandpreventdefaultevent')
 }
 
-export const Default = (args, { argTypes }) => ({
+export const Default = () => ({
   components: { NewsForm },
   template: '<NewsForm @additemandpreventdefaultevent="onAdditemandpreventdefaultevent"/>',
   methods: actionsData

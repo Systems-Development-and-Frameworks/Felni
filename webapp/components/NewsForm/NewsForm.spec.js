@@ -25,7 +25,7 @@ describe('Tests for NewsForm.vue', () => {
         beforeEach(async () => {
           await newsForm.find('input').setValue('Title example')
         })
-        it('is not disabled', async () => {
+        it('is not disabled', () => {
           const createButton = newsForm.find('button.create-item-button')
           expect(createButton.attributes('disabled')).toBe(undefined)
         })

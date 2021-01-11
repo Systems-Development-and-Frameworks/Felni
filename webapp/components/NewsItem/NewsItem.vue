@@ -1,13 +1,12 @@
 <template>
   <div class="mb-4 mt-4">
     <h2>
-      <span class="news-title">{{ item.title }}</span
-      >&nbsp;<span class="news-votes">({{ item.votes }})</span>
+      <span class="news-title">{{ item.title }}</span>&nbsp;<span class="news-votes">({{ item.votes }})</span>
     </h2>
     <button
       type="button"
       class="btn btn-primary mr-2 upvote-button"
-      v-on:click="addcounter"
+      @click="addcounter"
     >
       Upvote
     </button>
@@ -30,15 +29,15 @@
 
 <script>
 export default {
+  name: 'NewsItem',
   props: {
     item: { type: Object, required: true }
   },
-  data: function () {
+  data () {
     return {
       mutableItem: this.item
     }
   },
-  name: 'NewsItem',
   methods: {
     addcounter () {
       this.mutableItem.votes += 1

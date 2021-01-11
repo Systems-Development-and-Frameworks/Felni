@@ -1,5 +1,5 @@
-import NewsItem from './NewsItem.vue'
 import { action } from '@storybook/addon-actions'
+import NewsItem from './NewsItem.vue'
 
 export default {
   title: 'NewsItem',
@@ -18,7 +18,7 @@ export const actionsData = {
   onRemoveitem: action('onRemoveitem')
 }
 
-export const Default = (args, { argTypes }) => ({
+export const Default = () => ({
   components: { NewsItem },
   template: '<NewsItem :item="item" @updateitem="onUpdateitem" @removeitem="onRemoveitem"/>',
   props: {
