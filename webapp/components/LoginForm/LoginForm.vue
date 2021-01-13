@@ -102,8 +102,9 @@ export default {
               password: this.loginPassword
             }
           })
-          .then(({ data }) => {
+          .then(async ({ data }) => {
             this.$store.commit('auth/setToken', data.login)
+            await this.$apolloHelpers.onLogin(data.login)
             this.$router.push({
               path: '/'
             })
@@ -128,8 +129,9 @@ export default {
               password: this.signupPassword
             }
           })
-          .then(({ data }) => {
+          .then(async ({ data }) => {
             this.$store.commit('auth/setToken', data.signup)
+            await this.$apolloHelpers.onLogin(data.signup)
             this.$router.push({
               path: '/'
             })
