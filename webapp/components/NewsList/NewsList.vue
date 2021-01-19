@@ -12,6 +12,7 @@
         </button>
         <div v-for="item in sortItems" :key="item.id">
           <NewsItem
+            :loggedOut="loggedOut"
             :item="item"
             @updateitem="updateitem($event)"
             @removeitem="removeitem($event)"
@@ -40,6 +41,11 @@ export default {
     NewsItem,
     NewsForm
   },
+  /*props: {
+    loggedOut: {
+      type: Boolean
+  	}
+  },*/
   async fetch () {
     const query = gql`
            query posts {

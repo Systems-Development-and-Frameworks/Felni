@@ -37,18 +37,21 @@ import jwt_decode from 'jwt-decode'
 export default {
   name: 'NewsItem',
   props: {
-    item: { type: Object, required: true }
+    item: { type: Object, required: true },
+    loggedOut: {
+      type: Boolean
+  	}
   },
   data () {
     return {
       mutableItem: this.item
     }
   },
-  computed: {
+  /*computed: {
     loggedOut () {
       return this.$store.state.auth.token === ''
     }
-  },
+  },*/
   methods: {
     addcounter () {
       // this.mutableItem.votes += 1

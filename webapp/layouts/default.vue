@@ -24,11 +24,11 @@
             </NuxtLink>
           </li>
         </ul>
-        <NavbarLoginButton />
+        <NavbarLoginButton :loggedOut="loggedOut"/>
       </div>
     </nav>
     <div class="container">
-      <Nuxt />
+      <Nuxt :loggedOut="loggedOut"/>
     </div>
   </div>
 </template>
@@ -43,6 +43,11 @@ export default {
   name: 'Login',
   components: {
     NavbarLoginButton
-  }
+  },
+  computed: {
+    loggedOut () {
+      return this.$store.state.auth.token === ''
+    }
+  },
 }
 </script>
