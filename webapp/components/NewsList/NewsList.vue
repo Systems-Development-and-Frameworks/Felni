@@ -40,7 +40,26 @@ export default {
     NewsItem,
     NewsForm
   },
-  async fetch () {
+  apollo: {
+    posts: {
+      query: gql`
+           query posts {
+             posts {
+              id
+              title
+              votes
+              author {
+                id
+              }
+             }
+           }
+         `,
+      result ({ data, loading, networkStatus }) {
+        this.items = data.posts
+      }
+    }
+  },
+  /*async fetch () {
     const query = gql`
            query posts {
              posts {
@@ -64,7 +83,7 @@ export default {
     } catch (e) {
       alert(e)
     }
-  },
+  },*/
   data: () => {
     return {
       items: [],
@@ -80,7 +99,7 @@ export default {
       }
     },
     loggedOut () {
-      return this.$store.state.auth.token === ''
+      return true//this.$store.state.auth.token === ''
     }
   },
   methods: {
