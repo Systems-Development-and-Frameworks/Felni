@@ -12,7 +12,7 @@
         </button>
         <div v-for="item in sortItems" :key="item.id">
           <NewsItem
-            :loggedOut="loggedOut"
+            :logged-out="loggedOut"
             :item="item"
             @updateitem="updateitem($event)"
             @removeitem="removeitem($event)"
@@ -44,7 +44,7 @@ export default {
   props: {
     loggedOut: {
       type: Boolean
-  	}
+    }
   },
   async fetch () {
     const query = gql`
@@ -84,10 +84,7 @@ export default {
       } else {
         return [...this.items].sort((item1, item2) => item2.votes - item1.votes)
       }
-    },
-    /*loggedOut () {
-      return this.$store.state.auth.token === ''
-    }*/
+    }
   },
   methods: {
     async updateitem (eventitem) {

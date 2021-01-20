@@ -10,20 +10,15 @@
 <script>
 export default {
   name: 'NavbarLoginButton',
-  /*computed: {
-    loggedOut () {
-      return this.$store.state.auth.token === ''
-    }
-  },*/
   props: {
     loggedOut: {
       type: Boolean
-  	}
+    }
   },
   methods: {
     logout () {
-      //this.$apolloHelpers.onLogout()
-      this.$store.commit('auth/setToken', '')
+      this.$apolloHelpers.onLogout()
+      location.reload()
     }
   }
 }

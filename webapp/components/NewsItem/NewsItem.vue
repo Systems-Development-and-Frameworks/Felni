@@ -40,30 +40,24 @@ export default {
     item: { type: Object, required: true },
     loggedOut: {
       type: Boolean
-  	}
+    }
   },
   data () {
     return {
       mutableItem: this.item
     }
   },
-  /*computed: {
-    loggedOut () {
-      return this.$store.state.auth.token === ''
-    }
-  },*/
   methods: {
     addcounter () {
       // this.mutableItem.votes += 1
       this.$emit('updateitem', this.mutableItem)
     },
     isDeleteAllowed () {
-      let token = this.$store.state.auth.token
-      token = token.replace('Bearer ', '')
-      console.log(token);
-      if(!token){
-        return false;
+      let token = this.$apolloHelpers.getToken()
+      if (!token) {
+        return false
       }
+      token = token.replace('Bearer ', '')
       const decoded = jwt_decode(token)
       return decoded.id === this.mutableItem.author.id
     }

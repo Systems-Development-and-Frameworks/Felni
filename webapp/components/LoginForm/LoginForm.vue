@@ -130,7 +130,6 @@ export default {
             }
           })
           .then(async ({ data }) => {
-            this.$store.commit('auth/setToken', data.signup)
             await this.$apolloHelpers.onLogin(data.signup)
             this.$router.push({
               path: '/'
