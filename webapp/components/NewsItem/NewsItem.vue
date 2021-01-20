@@ -52,11 +52,12 @@ export default {
       // this.mutableItem.votes += 1
       this.$emit('updateitem', this.mutableItem)
     },
-    isDeleteAllowed () {
-      let token = this.$apolloHelpers.getToken()
+    async isDeleteAllowed () {
+      let token = await this.$apolloHelpers.getToken()
       if (!token) {
         return false
       }
+      console.log(token)
       token = token.replace('Bearer ', '')
       const decoded = jwt_decode(token)
       return decoded.id === this.mutableItem.author.id

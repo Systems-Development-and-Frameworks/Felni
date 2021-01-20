@@ -41,13 +41,15 @@ export default {
     NewsItem,
     NewsForm
   },
+
   props: {
     loggedOut: {
       type: Boolean
     }
   },
-  async fetch () {
-    const query = gql`
+  apollo: {
+    posts: {
+      query: gql`
            query posts {
              posts {
               id
@@ -58,17 +60,10 @@ export default {
               }
              }
            }
-         `
-    try {
-      await this.$apollo
-        .query({
-          query
-        })
-        .then((data) => {
-          this.items = [...data.data.posts]
-        })
-    } catch (e) {
-      alert(e)
+         `,
+      result ({ data }) {
+        this.items = data.posts
+      }
     }
   },
   data: () => {
@@ -144,11 +139,9 @@ export default {
               }
             }
           })
-          .then(() => {
-            const index = this.items.findIndex(item => item.id === id)
-            this.items.splice(index, 1)
-            this.items = [...this.items]
-          })
+        const index = this.items.findIndex(item => item.id === id)
+        this.items.splice(index, 1)
+        this.items = [...this.items]
       } catch (e) {
         alert(e)
       }

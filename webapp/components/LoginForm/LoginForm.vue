@@ -25,7 +25,7 @@
               class="form-control"
             >
           </div>
-          <button type="submit" class="btn btn-primary">
+          <button id="loginButton" type="submit" class="btn btn-primary">
             Submit
           </button>
         </form>
@@ -64,7 +64,7 @@
               class="form-control"
             >
           </div>
-          <button type="submit" class="btn btn-primary">
+          <button id="signupButton" type="submit" class="btn btn-primary">
             Submit
           </button>
         </form>
