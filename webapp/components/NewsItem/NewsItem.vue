@@ -60,6 +60,10 @@ export default {
     isDeleteAllowed () {
       let token = this.$store.state.auth.token
       token = token.replace('Bearer ', '')
+      console.log(token);
+      if(!token){
+        return false;
+      }
       const decoded = jwt_decode(token)
       return decoded.id === this.mutableItem.author.id
     }

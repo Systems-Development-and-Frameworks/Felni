@@ -41,11 +41,11 @@ export default {
     NewsItem,
     NewsForm
   },
-  /*props: {
+  props: {
     loggedOut: {
       type: Boolean
   	}
-  },*/
+  },
   async fetch () {
     const query = gql`
            query posts {
@@ -85,9 +85,9 @@ export default {
         return [...this.items].sort((item1, item2) => item2.votes - item1.votes)
       }
     },
-    loggedOut () {
+    /*loggedOut () {
       return this.$store.state.auth.token === ''
-    }
+    }*/
   },
   methods: {
     async updateitem (eventitem) {
