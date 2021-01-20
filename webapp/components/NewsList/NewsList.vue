@@ -160,11 +160,9 @@ export default {
               }
             }
           })
-          .then(() => {
-            const index = this.items.findIndex(item => item.id === id)
-            this.items.splice(index, 1)
-            this.items = [...this.items]
-          })
+          const index = this.items.findIndex(item => item.id === id)
+          this.items.splice(index, 1)
+          this.items = [...this.items]
       } catch (e) {
         alert(e)
       }

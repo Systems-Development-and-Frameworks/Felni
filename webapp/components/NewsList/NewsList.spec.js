@@ -4,6 +4,7 @@ import NewsItem from '@/components/NewsItem/NewsItem.vue'
 import VueApollo from 'vue-apollo'
 import { createMockClient } from 'mock-apollo-client'
 import gql from 'graphql-tag'
+import { state } from '~/store/auth'
 
 const postsMock = {
   data: {
@@ -71,6 +72,11 @@ describe('Newslist.vue', () => {
     wrapper = mount(NewsList, {
       localVue,
       apolloProvider,
+      mocks: {
+        $apollo: {
+          mutate:
+        }
+      },
       data() {
         return {
           items: data,
