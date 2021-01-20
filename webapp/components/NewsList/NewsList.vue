@@ -54,36 +54,11 @@ export default {
              }
            }
          `,
-      result ({ data, loading, networkStatus }) {
+      result ({ data }) {
         this.items = data.posts
       }
     }
   },
-  /*async fetch () {
-    const query = gql`
-           query posts {
-             posts {
-              id
-              title
-              votes
-              author {
-                id
-              }
-             }
-           }
-         `
-    try {
-      await this.$apollo
-        .query({
-          query
-        })
-        .then((data) => {
-          this.items = [...data.data.posts]
-        })
-    } catch (e) {
-      alert(e)
-    }
-  },*/
   data: () => {
     return {
       items: [],
@@ -99,7 +74,7 @@ export default {
       }
     },
     loggedOut () {
-      return true//this.$store.state.auth.token === ''
+      return this.$store.state.auth.token === ''
     }
   },
   methods: {
@@ -160,9 +135,9 @@ export default {
               }
             }
           })
-          const index = this.items.findIndex(item => item.id === id)
-          this.items.splice(index, 1)
-          this.items = [...this.items]
+        const index = this.items.findIndex(item => item.id === id)
+        this.items.splice(index, 1)
+        this.items = [...this.items]
       } catch (e) {
         alert(e)
       }

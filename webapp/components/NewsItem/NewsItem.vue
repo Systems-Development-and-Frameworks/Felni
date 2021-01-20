@@ -46,7 +46,7 @@ export default {
   },
   computed: {
     loggedOut () {
-      return true//this.$store.state.auth.token === ''
+      return this.$store.state.auth.token === ''
     }
   },
   methods: {
