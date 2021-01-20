@@ -6,15 +6,11 @@ describe('Tests for NewsForm.vue', () => {
 
   const createComponent = (data) => {
     wrapper = mount(NavbarLoginButton, {
-      mocks: {
-        $apolloHelpers: {
-          getToken: jest.fn().mockResolvedValue(undefined)
-        }
+      propsData: {
+        loggedOut: data
       },
-      data () {
-        return {
-          newsTitle: data
-        }
+      stubs: {
+        NuxtLink: true
       }
     })
   }
@@ -24,9 +20,18 @@ describe('Tests for NewsForm.vue', () => {
   })
 
   describe(':button', () => {
+    describe('not logged in', () => {
+      it('reads Login', () => {
+        createComponent(true)
+
+        const loginButton = wrapper.find('.btn.btn-outline-success')
+        expect(loginButton.exists()).toBeTruthy()
+        expect(loginButton.text()).toBe('Login')
+      })
+    })
     describe('logged in', () => {
       it('reads Logout', () => {
-        createComponent()
+        createComponent(false)
 
         const logoutButton = wrapper.find('.btn.btn-outline-danger')
         expect(logoutButton.exists()).toBeTruthy()
