@@ -4,12 +4,9 @@ import NavbarLoginButton from '@/components/NavbarLoginButton/NavbarLoginButton.
 describe('Tests for NewsForm.vue', () => {
   let wrapper
 
-  const createComponent = (data, token) => {
+  const createComponent = (data) => {
     wrapper = mount(NavbarLoginButton, {
       mocks: {
-        $store: {
-          state: { auth: { token } }
-        },
         $apolloHelpers: {
           getToken: jest.fn().mockResolvedValue(undefined)
         }
@@ -27,18 +24,9 @@ describe('Tests for NewsForm.vue', () => {
   })
 
   describe(':button', () => {
-    describe('not logged in', () => {
-      it('reads Login', () => {
-        createComponent('')
-
-        const loginButton = wrapper.find('.btn.btn-outline-success')
-        expect(loginButton.exists()).toBeTruthy()
-        expect(loginButton.text()).toBe('Login')
-      })
-    })
     describe('logged in', () => {
       it('reads Logout', () => {
-        createComponent('apollo-token')
+        createComponent()
 
         const logoutButton = wrapper.find('.btn.btn-outline-danger')
         expect(logoutButton.exists()).toBeTruthy()

@@ -57,7 +57,6 @@ export default {
       if (!token) {
         return false
       }
-      console.log(token)
       token = token.replace('Bearer ', '')
       const decoded = jwt_decode(token)
       return decoded.id === this.mutableItem.author.id
