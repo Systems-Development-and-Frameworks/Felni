@@ -16,7 +16,7 @@ jobs:
       working-directory: ./webapp
       run: |
         npm install
-        npm run test:unit
+        npm run test
         npm run lint
       env:
         CI: true

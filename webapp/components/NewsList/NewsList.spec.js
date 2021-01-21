@@ -18,6 +18,13 @@ describe('Newslist.vue', () => {
         },
         $apolloHelpers: {
           getToken: jest.fn().mockResolvedValue(undefined)
+        },
+        $store: {
+          state: {
+            auth: {
+              token: ''
+            }
+          }
         }
       },
       data () {
@@ -80,8 +87,7 @@ describe('Newslist.vue', () => {
         const firstNewsItemBeforeRemoval = wrapper.findAllComponents(NewsItem).at(0)
         const removeButton = firstNewsItemBeforeRemoval.find('button.remove-button')
         await removeButton.trigger('click')
-        // await wrapper.vm.$nextTick()
-        expect(mutate).toBeCalled()
+        await wrapper.vm.$nextTick()
         expect(mutate).toHaveBeenCalled()
         const firstNewsItemAfterRemoval = wrapper.findComponent(NewsItem)
         expect(firstNewsItemAfterRemoval.find('span.news-title').text())

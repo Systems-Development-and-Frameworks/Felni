@@ -8,9 +8,9 @@
     "start": "nuxt-ts start",
     "build-start": "nuxt-ts build && nuxt-ts start",
     "generate": "nuxt-ts generate",
-    "lint:js": "eslint --fix --ext .js,.vue --ignore-path .gitignore .",
-    "lint": "npm run lint:js --fix",
-    "test": "jest",
+    "lint:fix": "eslint --fix --ext .js,.vue --ignore-path .gitignore .",
+    "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
+    "test": "jest --no-coverage",
     "storybook": "nuxt storybook",
     "build-storybook": "nuxt storybook build"
   },

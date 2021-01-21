@@ -145,9 +145,6 @@ export default {
       } catch (e) {
         alert(e)
       }
-      // this.items = this.items.filter((item) => {
-      //   return item.id !== id
-      // })
     },
     async additem (title) {
       // mutation for add post

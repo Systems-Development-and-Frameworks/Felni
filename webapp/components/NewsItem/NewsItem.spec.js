@@ -4,20 +4,15 @@ import NewsItem from '@/components/NewsItem/NewsItem.vue'
 describe('NewsItem.vue', () => {
   let wrapper
 
-  let mutate = jest.fn()
-
-  const createComponent = (data, mutate) => {
+  const createComponent = (data) => {
     wrapper = mount(NewsItem, {
+      propsData: {
+        item: data
+      },
       mocks: {
-        $apollo: {
-          mutate
-        },
         $apolloHelpers: {
           getToken: jest.fn().mockResolvedValue(undefined)
         }
-      },
-      propsData: {
-        item: data
       }
     })
   }
@@ -29,7 +24,7 @@ describe('NewsItem.vue', () => {
   describe(':buttons', () => {
     describe('click remove', () => {
       it('emits removeitem event', async () => {
-        createComponent({ id: 20, title: 'Item 1', votes: 0 }, mutate)
+        createComponent({ id: 20, title: 'Item 1', votes: 0 })
 
         const removeButton = wrapper.find('button.remove-button')
         await removeButton.trigger('click')
@@ -39,20 +34,17 @@ describe('NewsItem.vue', () => {
 
     describe('click upvote', () => {
       it('increases votes by one', async () => {
-        mutate = jest.fn().mockResolvedValue({ upvote: { id: 20, title: 'Item 1', votes: 1 } })
-        createComponent({ id: 20, title: 'Item 1', votes: 0 }, mutate)
+        createComponent({ id: 20, title: 'Item 1', votes: 0 })
 
         const upvoteButton = wrapper.find('button.upvote-button')
         upvoteButton.trigger('click')
         await wrapper.vm.$nextTick()
-        expect(mutate).toHaveBeenCalled()
-        expect(mutate).toBeCalled()
-
-        expect(wrapper.vm._data.mutableItem.votes).toBe(1)
+        expect(wrapper.emitted().updateitem[0][0]).toEqual({ id: 20, title: 'Item 1', votes: 0 })
+        expect(wrapper.emitted().updateitem).toBeTruthy()
       })
     })
 
-    /* TODO implement down vote button
+    /* commented test as we don`t have a downvote functionality in our backend
     describe('click downvote', () => {
       it('decreases votes by one', async () => {
         createComponent({ id: 20, title: 'Item 1', votes: 0 }, jest.fn().mockResolvedValue({upvote: { id: 20, title: 'Item 1', votes: -1 }}))

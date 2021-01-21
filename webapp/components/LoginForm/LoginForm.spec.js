@@ -1,19 +1,28 @@
-import { mount } from '@vue/test-utils'
+import { createLocalVue, mount } from '@vue/test-utils'
 import LoginForm from '@/components/LoginForm/LoginForm.vue'
 
 describe('Tests for NewsForm.vue', () => {
   let wrapper
 
-  const mutate = jest.fn()
+  const localVue = createLocalVue()
 
-  const createComponent = (data, mutate) => {
+  const mutate = jest.fn().mockResolvedValue({ data: { login: '', signup: '' } })
+
+  const createComponent = (data) => {
     wrapper = mount(LoginForm, {
+      localVue,
       mocks: {
         $apollo: {
           mutate
         },
         $apolloHelpers: {
-          getToken: jest.fn().mockResolvedValue(undefined)
+          onLogin: jest.fn()
+        },
+        $store: {
+          commit: jest.fn()
+        },
+        $router: {
+          push: jest.fn
         }
       },
       data () {
@@ -53,10 +62,8 @@ describe('Tests for NewsForm.vue', () => {
     })
     describe('after login', () => {
       it('login mutation has to to be called', async () => {
-        createComponent()
-
-        const loginButton = wrapper.find('#loginButton')
-        await loginButton.trigger('click')
+        createComponent([])
+        await wrapper.find('form').trigger('submit.prevent')
         await wrapper.vm.$nextTick()
         expect(mutate).toBeCalled()
       })
