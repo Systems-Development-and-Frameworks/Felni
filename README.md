@@ -30,3 +30,7 @@ This is the homework repository for the group Felni from Felix and Nicolas.
 ### Exercise 5:
 
 - Link to folder: [Apollo GraphQL Backend + Neo4J](./backend)
+
+### Exercise 7:
+
+- Link to folder: [News-List Web App with Nuxt](./webapp)
