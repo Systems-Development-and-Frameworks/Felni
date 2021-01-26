@@ -41,12 +41,6 @@ export default {
     NewsItem,
     NewsForm
   },
-
-  props: {
-    loggedOut: {
-      type: Boolean
-    }
-  },
   apollo: {
     posts: {
       query: gql`
@@ -79,6 +73,9 @@ export default {
       } else {
         return [...this.items].sort((item1, item2) => item2.votes - item1.votes)
       }
+    },
+    loggedOut () {
+      return this.$apolloHelpers.getToken() === undefined
     }
   },
   methods: {

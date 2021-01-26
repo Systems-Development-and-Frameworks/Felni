@@ -10,9 +10,9 @@
 <script>
 export default {
   name: 'NavbarLoginButton',
-  props: {
-    loggedOut: {
-      type: Boolean
+  computed: {
+    loggedOut () {
+      return this.$apolloHelpers.getToken() === undefined
     }
   },
   methods: {
