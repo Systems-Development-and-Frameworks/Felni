@@ -1,5 +1,10 @@
 <template>
-  <NuxtLink v-if="loggedOut" class="btn btn-outline-success" role="button" to="/login">
+  <NuxtLink
+    v-if="loggedOut"
+    class="btn btn-outline-success"
+    role="button"
+    to="/login"
+  >
     Login
   </NuxtLink>
   <button v-else class="btn btn-outline-danger" @click="logout">
@@ -10,9 +15,9 @@
 <script>
 export default {
   name: 'NavbarLoginButton',
-  computed: {
-    loggedOut () {
-      return this.$apolloHelpers.getToken() === undefined
+  props: {
+    loggedOut: {
+      type: Boolean
     }
   },
   methods: {
