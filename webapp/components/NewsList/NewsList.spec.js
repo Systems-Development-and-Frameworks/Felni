@@ -17,7 +17,7 @@ describe('Newslist.vue', () => {
           mutate
         },
         $apolloHelpers: {
-          getToken: jest.fn().mockResolvedValue(undefined)
+          getToken: jest.fn().mockReturnValue(undefined)
         },
         $store: {
           state: {

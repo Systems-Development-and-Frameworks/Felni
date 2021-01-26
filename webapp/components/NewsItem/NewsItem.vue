@@ -12,7 +12,7 @@
       Upvote
     </button>
     <button
-      v-if="!loggedOut && isDeleteAllowed"
+      v-show="!loggedOut && isDeleteAllowed"
       type="button"
       class="btn btn-primary mr-2 remove-button"
       @click="$emit('removeitem', item.id)"
@@ -46,8 +46,12 @@ export default {
         return false
       }
       token = token.replace('Bearer ', '')
-      const decoded = jwt_decode(token)
-      return decoded.id === this.mutableItem.author.id
+      try {
+        const decoded = jwt_decode(token)
+        return decoded.id === this.mutableItem.author.id
+      } catch (e) {
+        return false
+      }
     }
   },
   methods: {

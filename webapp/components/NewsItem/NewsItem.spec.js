@@ -11,7 +11,7 @@ describe('NewsItem.vue', () => {
       },
       mocks: {
         $apolloHelpers: {
-          getToken: jest.fn().mockResolvedValue(undefined)
+          getToken: jest.fn().mockReturnValue(undefined)
         }
       }
     })
