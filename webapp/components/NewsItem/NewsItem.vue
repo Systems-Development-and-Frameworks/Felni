@@ -11,16 +11,8 @@
     >
       Upvote
     </button>
-    <!-- <button
-      v-show="!loggedOut"
-      type="button"
-      class="btn btn-primary mr-2 downvote-button"
-      @click="reducecounter"
-    >
-      Downvote
-    </button> -->
     <button
-      v-show="!loggedOut && isDeleteAllowed()"
+      v-if="!loggedOut && isDeleteAllowed"
       type="button"
       class="btn btn-primary mr-2 remove-button"
       @click="$emit('removeitem', item.id)"
@@ -47,13 +39,9 @@ export default {
       mutableItem: this.item
     }
   },
-  methods: {
-    addcounter () {
-      // this.mutableItem.votes += 1
-      this.$emit('updateitem', this.mutableItem)
-    },
-    async isDeleteAllowed () {
-      let token = await this.$apolloHelpers.getToken()
+  computed: {
+    isDeleteAllowed () {
+      let token = this.$apolloHelpers.getToken()
       if (!token) {
         return false
       }
@@ -61,10 +49,11 @@ export default {
       const decoded = jwt_decode(token)
       return decoded.id === this.mutableItem.author.id
     }
-    // reducecounter () {
-    //   this.mutableItem.votes -= 1
-    //   this.$emit('updateitem', this.mutableItem)
-    // }
+  },
+  methods: {
+    addcounter () {
+      this.$emit('updateitem', this.mutableItem)
+    }
   }
 }
 </script>

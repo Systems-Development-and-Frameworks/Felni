@@ -76,8 +76,8 @@ export class Neo4JDataSource extends DataSource {
     let post
     let author
     await txc.run(
-      'MATCH (p:Post { id: $postId })-[r]-(b)' +
-      'RETURN p,r,b', {
+      `MATCH (p:Post { id: $postId })-[r]-(b)
+      RETURN p,r,b`, {
         postId: postId
       }).then(result => {
       if (result.records.length) {
