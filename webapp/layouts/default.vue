@@ -24,11 +24,11 @@
             </NuxtLink>
           </li>
         </ul>
-        <NavbarLoginButton :logged-out="loggedOut" />
+        <NavbarLoginButton :logged-out="loggedOut" @updateloggedoutstate="handleupdateloggedoutstate" />
       </div>
     </nav>
     <div class="container">
-      <Nuxt :logged-out="loggedOut" />
+      <NewsList :logged-out="loggedOut" />
     </div>
   </div>
 </template>
@@ -44,9 +44,17 @@ export default {
   components: {
     NavbarLoginButton
   },
-  computed: {
-    loggedOut () {
-      return this.$apolloHelpers.getToken() === undefined
+  data: () => {
+    return {
+      loggedOut: true
+    }
+  },
+  mounted () {
+    this.loggedOut = this.$apolloHelpers.getToken() === undefined
+  },
+  methods: {
+    handleupdateloggedoutstate () {
+      this.loggedOut = this.$apolloHelpers.getToken() === undefined
     }
   }
 }

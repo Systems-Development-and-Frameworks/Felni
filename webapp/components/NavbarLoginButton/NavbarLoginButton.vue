@@ -23,7 +23,7 @@ export default {
   methods: {
     logout () {
       this.$apolloHelpers.onLogout()
-      location.reload()
+      this.$emit('updateloggedoutstate')
     }
   }
 }
