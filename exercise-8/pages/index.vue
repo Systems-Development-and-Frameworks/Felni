@@ -83,7 +83,7 @@
             </div>
             <div class="col-10 col-lg-12">
               <div class="row d-flex justify-content-center mt-2">
-                <b>What</b>
+                <b>We</b>
               </div>
               <div class="row d-flex justify-content-center mt-2">
                 <div class="content">
@@ -104,7 +104,7 @@
             </div>
             <div class="col-10 col-lg-12">
               <div class="row d-flex justify-content-center mt-2">
-                <b>What</b>
+                <b>Do</b>
               </div>
               <div class="row d-flex justify-content-center mt-2">
                 <div class="content">
