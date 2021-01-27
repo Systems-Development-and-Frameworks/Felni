@@ -1,6 +1,6 @@
 <template>
   <div>
-    <nav class="navbar navbar-expand-md bg-dark navbar-dark">
+    <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
       <!-- Brand -->
       <a class="navbar-brand" href="#">Logo</a>
 
@@ -43,7 +43,26 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-12 col-lg-4">
-          <div class="row d-flex justify-content-center mt-3">
+          <div class="row mt-3">
+            <div class="col-2 col-lg-12 d-flex justify-content-center">
+              <span class="dot"></span>
+            </div>
+            <div class="col-10 col-lg-12">
+              <div class="row d-flex justify-content-center mt-2">
+                <b>What</b>
+              </div>
+              <div class="row d-flex justify-content-center mt-2">
+                <div class="content">
+                  Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed
+                  diam nonumy eirmod tempor invidunt ut labore et dolore magna
+                  aliquyam erat, sed diam voluptua. At vero eos et accusam et
+                  justo duo dolores et ea rebum. Stet clita kasd gubergren, no
+                  sea takimata sanctus est Lorem ipsum dolor sit amet.
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- <div class="row d-flex justify-content-center mt-3">
             <span class="dot"></span>
           </div>
           <div class="row d-flex justify-content-center mt-2"><b>What</b></div>
@@ -55,35 +74,47 @@
               dolores et ea rebum. Stet clita kasd gubergren, no sea takimata
               sanctus est Lorem ipsum dolor sit amet.
             </div>
-          </div>
+          </div> -->
         </div>
         <div class="col-12 col-lg-4">
-          <div class="row d-flex justify-content-center mt-3">
-            <span class="dot"></span>
-          </div>
-          <div class="row d-flex justify-content-center mt-2"><b>We</b></div>
-          <div class="row d-flex justify-content-center mt-2">
-            <div class="content">
-              Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
-              nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam
-              erat, sed diam voluptua. At vero eos et accusam et justo duo
-              dolores et ea rebum. Stet clita kasd gubergren, no sea takimata
-              sanctus est Lorem ipsum dolor sit amet.
+          <div class="row mt-3">
+            <div class="col-2 col-lg-12 d-flex justify-content-center">
+              <span class="dot"></span>
+            </div>
+            <div class="col-10 col-lg-12">
+              <div class="row d-flex justify-content-center mt-2">
+                <b>What</b>
+              </div>
+              <div class="row d-flex justify-content-center mt-2">
+                <div class="content">
+                  Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed
+                  diam nonumy eirmod tempor invidunt ut labore et dolore magna
+                  aliquyam erat, sed diam voluptua. At vero eos et accusam et
+                  justo duo dolores et ea rebum. Stet clita kasd gubergren, no
+                  sea takimata sanctus est Lorem ipsum dolor sit amet.
+                </div>
+              </div>
             </div>
           </div>
         </div>
         <div class="col-12 col-lg-4">
-          <div class="row d-flex justify-content-center mt-3">
-            <span class="dot"></span>
-          </div>
-          <div class="row d-flex justify-content-center mt-2"><b>Do</b></div>
-          <div class="row d-flex justify-content-center mt-2">
-            <div class="content">
-              Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
-              nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam
-              erat, sed diam voluptua. At vero eos et accusam et justo duo
-              dolores et ea rebum. Stet clita kasd gubergren, no sea takimata
-              sanctus est Lorem ipsum dolor sit amet.
+          <div class="row mt-3">
+            <div class="col-2 col-lg-12 d-flex justify-content-center">
+              <span class="dot"></span>
+            </div>
+            <div class="col-10 col-lg-12">
+              <div class="row d-flex justify-content-center mt-2">
+                <b>What</b>
+              </div>
+              <div class="row d-flex justify-content-center mt-2">
+                <div class="content">
+                  Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed
+                  diam nonumy eirmod tempor invidunt ut labore et dolore magna
+                  aliquyam erat, sed diam voluptua. At vero eos et accusam et
+                  justo duo dolores et ea rebum. Stet clita kasd gubergren, no
+                  sea takimata sanctus est Lorem ipsum dolor sit amet.
+                </div>
+              </div>
             </div>
           </div>
         </div>
