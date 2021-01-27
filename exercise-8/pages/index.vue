@@ -1,5 +1,34 @@
 <template>
   <div>
+    <nav class="navbar navbar-expand-md bg-dark navbar-dark">
+      <!-- Brand -->
+      <a class="navbar-brand" href="#">Navbar</a>
+
+      <!-- Toggler/collapsibe Button -->
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#collapsibleNavbar"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <!-- Navbar links -->
+      <div class="collapse navbar-collapse" id="collapsibleNavbar">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="#">Link</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Link</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Link</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
     <div
       id="carouselExampleSlidesOnly"
       class="carousel slide"
@@ -61,7 +90,12 @@
       </div>
     </div>
     <div class="footer navbar-fixed-bottom">
-      Bla bla bla
+      <div class="container-fluid">
+        <div class="pl-3">
+          Imprint <br />
+          Copyright by Felni 2021
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -87,9 +121,9 @@ export default Vue.extend({});
 
 .footer {
   background-color: lightgray;
-    position: fixed;
-    height: 100px;
-    bottom: 0;
-    width: 100%;
+  position: fixed;
+  height: 60px;
+  bottom: 0;
+  width: 100%;
 }
 </style>
