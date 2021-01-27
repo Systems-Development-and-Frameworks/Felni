@@ -2,7 +2,7 @@
   <div>
     <nav class="navbar navbar-expand-md bg-dark navbar-dark">
       <!-- Brand -->
-      <a class="navbar-brand" href="#">Navbar</a>
+      <a class="navbar-brand" href="#">Logo</a>
 
       <!-- Toggler/collapsibe Button -->
       <button
@@ -18,13 +18,13 @@
       <div class="collapse navbar-collapse" id="collapsibleNavbar">
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link" href="#">Link</a>
+            <a class="nav-link" href="#">Link 1</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Link</a>
+            <a class="nav-link" href="#">Link 2</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Link</a>
+            <a class="nav-link" href="#">Link 3</a>
           </li>
         </ul>
       </div>
